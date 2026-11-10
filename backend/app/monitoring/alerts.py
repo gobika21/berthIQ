@@ -5,7 +5,7 @@ Lifecycle of an alert:
 
 Lifecycle of the AI advisory attached to an alert:
     none → generating → pending_approval → approved | rejected
-                      ↘ failed
+                      ↘ failed             ↘ expired (alert closed before anyone reviewed it)
 
 Nothing an AI drafts is treated as "shared" until a person approves it.
 """
@@ -18,7 +18,7 @@ from app.monitoring.storage import data_path, load_json, save_json
 
 ALERT_TYPES = ("congestion_escalation", "anchor_drag", "weather_risk")
 ALERT_STATUSES = ("open", "acknowledged", "resolved")
-ADVISORY_STATUSES = ("none", "generating", "pending_approval", "approved", "rejected", "failed")
+ADVISORY_STATUSES = ("none", "generating", "pending_approval", "approved", "rejected", "failed", "expired")
 
 MAX_ALERTS = 300
 
@@ -62,6 +62,12 @@ class AlertStore:
                 if a["id"] == alert_id:
                     return a
         raise KeyError(alert_id)
+
+    def active(self, port_id: str, alert_type: str) -> "list[dict]":  # quoted: list() is a method here
+        """Alerts of this type for this port that are still open or acknowledged."""
+        with self._lock:
+            return [a for a in self._alerts
+                    if a["port_id"] == port_id and a["type"] == alert_type and a["status"] != "resolved"]
 
     def recent_exists(self, dedupe_key: str, within_seconds: float) -> bool:
         cutoff = time.time() - within_seconds
@@ -132,6 +138,19 @@ class AlertStore:
         self._log(alert, "resolved", by, note)
         self.save()
         return alert
+
+    def auto_resolve(self, alert_id: str, note: str) -> bool:
+        """Resolve on the monitor's behalf once an alert is no longer current. An AI draft
+        nobody reviewed is marked "expired" (never shared, never approved); a person's
+        approve/reject decision is kept; an advisory still being drafted is left alone."""
+        alert = self.get(alert_id)
+        if alert["status"] == "resolved" or alert["advisory_status"] == "generating":
+            return False
+        if alert["advisory_status"] == "pending_approval":
+            alert["advisory_status"] = "expired"
+            self._log(alert, "advisory_expired", "monitor", "Not reviewed before the alert was closed; never shared.")
+        self.resolve(alert_id, by="monitor", note=note)
+        return True
 
     def review_advisory(self, alert_id: str, approve: bool, by: str = "operator", note: str | None = None) -> dict:
         alert = self.get(alert_id)

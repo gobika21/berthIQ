@@ -13,8 +13,10 @@ TIER_AR = {"Low": "منخفض", "Medium": "متوسط", "High": "مرتفع", "C
 # A new tier must be seen on this many consecutive ticks before it counts, so a
 # single noisy reading (e.g. one ship briefly reporting "at anchor") can't fire an alert.
 CONFIRM_TICKS = int(os.environ.get("MONITOR_CONFIRM_TICKS", 2))
-# Escalations below this tier aren't worth interrupting anyone for.
-MIN_ALERT_TIER = os.environ.get("MONITOR_MIN_ALERT_TIER", "Medium")
+# Escalations below this tier aren't worth interrupting anyone for. "Medium" only means
+# about 20% busier than the port's usual level; at that bar it made up 51 of the first 111
+# live escalation alerts, so the default is "High" (at least 1.5x the usual queue).
+MIN_ALERT_TIER = os.environ.get("MONITOR_MIN_ALERT_TIER", "High")
 
 # An anchored ship swings around its anchor on the chain. With ~250 m of chain and a
 # 300-400 m container ship, the AIS antenna can sit 600 m+ from the anchor, and the
@@ -40,13 +42,20 @@ def tier_index(tier: str) -> int:
 class TierTracker:
     """Tracks each port's confirmed tier and reports confirmed escalations."""
 
-    def __init__(self, confirm_ticks: int = CONFIRM_TICKS):
+    def __init__(self, confirm_ticks: int = CONFIRM_TICKS, min_alert_tier: str = MIN_ALERT_TIER):
         self.confirm_ticks = confirm_ticks
+        self.min_alert_tier = min_alert_tier
         self._confirmed: dict[str, str] = {}
         self._candidate: dict[str, tuple[str, int]] = {}
 
     def confirmed(self, port_id: str) -> str | None:
         return self._confirmed.get(port_id)
+
+    def seed(self, port_id: str, tier: str) -> None:
+        """Start from a tier already known (e.g. the last one recorded before a restart),
+        so a restart doesn't report the port's ongoing level as a fresh rise from Low."""
+        if tier in TIER_ORDER:
+            self._confirmed.setdefault(port_id, tier)
 
     def update(self, port_id: str, tier: str) -> tuple[str, str] | None:
         """Feed the latest tier. Returns (from_tier, to_tier) when an escalation is confirmed."""
@@ -64,7 +73,7 @@ class TierTracker:
         self._confirmed[port_id] = tier
         self._candidate.pop(port_id, None)
         baseline = current or "Low"  # first confirmation: only alert if it's already bad
-        if tier_index(tier) > tier_index(baseline) and tier_index(tier) >= tier_index(MIN_ALERT_TIER):
+        if tier_index(tier) > tier_index(baseline) and tier_index(tier) >= tier_index(self.min_alert_tier):
             return baseline, tier
         return None
 

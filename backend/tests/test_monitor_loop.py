@@ -130,3 +130,102 @@ def test_no_escalation_alerts_before_port_normal_is_known(monitor):
         asyncio.run(m.tick())
     assert m.latest["rotterdam"]["tier"] == "Critical"      # still shown on the board...
     assert not [a for a in store.list() if a["type"] == "congestion_escalation"]   # ...but no alert
+
+
+# ---------------------------------------------------------------- noise control
+def test_restart_does_not_re_report_an_ongoing_level(monitor):
+    m, store, hist = monitor
+    _learn_normal(hist)
+    for _ in range(3):                             # before the restart Rotterdam was already Critical
+        hist.record("rotterdam", {"vessel_queue_length": 20, "berth_occupancy_rate": 0.4,
+                                  "avg_waiting_time_hours": 2.0, "tier": "Critical"})
+    m.seed_from_history()
+    m.readings["queue"] = 20
+    asyncio.run(m.tick()), asyncio.run(m.tick())
+    assert not [a for a in store.list() if a["type"] == "congestion_escalation"]
+
+
+def test_escalation_closes_itself_when_congestion_clears(monitor):
+    m, store, hist = monitor
+    _learn_normal(hist)
+    asyncio.run(m.tick())
+    m.readings["queue"] = 20
+    asyncio.run(m.tick()), asyncio.run(m.tick())
+    [alert] = [a for a in store.list() if a["type"] == "congestion_escalation"]
+
+    m.readings["queue"] = 1                        # back to normal, confirmed over two checks
+    asyncio.run(m.tick()), asyncio.run(m.tick())
+    closed = store.get(alert["id"])
+    assert closed["status"] == "resolved" and closed["log"][-1]["by"] == "monitor"
+
+
+def test_open_escalation_is_not_repeated_after_cooldown(monitor, monkeypatch):
+    m, store, hist = monitor
+    monkeypatch.setitem(mon.COOLDOWN_SECONDS, "congestion_escalation", 0)
+    _learn_normal(hist)
+    asyncio.run(m.tick())
+    m.readings["queue"] = 20
+    asyncio.run(m.tick()), asyncio.run(m.tick())
+    m.readings["queue"] = 5                        # dips to High, then back to Critical
+    asyncio.run(m.tick()), asyncio.run(m.tick())
+    m.readings["queue"] = 20
+    asyncio.run(m.tick()), asyncio.run(m.tick())
+    assert len([a for a in store.list() if a["type"] == "congestion_escalation"]) == 1
+
+
+def test_one_weather_alert_per_spell_then_it_closes(monitor, monkeypatch):
+    m, store, hist = monitor
+    monkeypatch.setitem(mon.COOLDOWN_SECONDS, "weather_risk", 0)
+    monkeypatch.setattr(mon, "WEATHER_INTERVAL_SECONDS", 0)   # refetch the forecast every tick
+    _learn_normal(hist)
+    for _ in range(3):
+        asyncio.run(m.tick())
+    [alert] = [a for a in store.list() if a["type"] == "weather_risk"]
+
+    async def calm(lat, lon, hours=12):
+        return [{"time": "2026-11-07T18:00", "gust_kn": 12.0, "visibility_m": 20000}]
+
+    monkeypatch.setattr(mon, "fetch_forecast", calm)
+    asyncio.run(m.tick())
+    assert store.get(alert["id"])["status"] == "resolved"
+
+
+def test_housekeeping_closes_stale_and_legacy_alerts_only(monitor):
+    m, store, hist = monitor
+
+    def make(alert_type, evidence, age_hours=0, demo=False):
+        a = store.create(alert_type=alert_type, port_id="rotterdam", port_name="Rotterdam", severity="High",
+                         title={"en": "t"}, message={"en": "m"}, evidence=evidence, dedupe_key=alert_type,
+                         snapshot={"port_name": "Rotterdam"}, demo=demo)
+        a["created_at"] -= age_hours * 3600
+        return a
+
+    legacy_drag = make("anchor_drag", {"drift_m": 600, "speed_knots": 7.9})
+    real_drag = make("anchor_drag", {"drift_m": 900, "speed_knots": 1.2, "confirmed_after_ticks": 2})
+    stale = make("congestion_escalation", {}, age_hours=30)
+    fresh = make("congestion_escalation", {}, age_hours=2)
+    awaiting_review = make("weather_risk", {}, age_hours=30)
+    store.mark_generating(awaiting_review["id"]); store.set_advisory(awaiting_review["id"], {"tier": "High"})
+    demo = make("anchor_drag", {}, demo=True)
+
+    m.housekeeping()
+    status = {k: store.get(a["id"])["status"] for k, a in {
+        "legacy_drag": legacy_drag, "real_drag": real_drag, "stale": stale, "fresh": fresh,
+        "awaiting_review": awaiting_review, "demo": demo}.items()}
+    assert status == {"legacy_drag": "resolved", "real_drag": "open", "stale": "resolved", "fresh": "open",
+                      "awaiting_review": "resolved", "demo": "open"}
+    assert store.get(awaiting_review["id"])["advisory_status"] == "expired"
+
+
+def test_newer_alert_replaces_older_ones_for_the_same_port(monitor):
+    m, store, hist = monitor
+    ids = [store.create(alert_type="congestion_escalation", port_id="rotterdam", port_name="Rotterdam",
+                        severity=sev, title={"en": "t"}, message={"en": "m"}, evidence={}, dedupe_key=sev,
+                        snapshot=None)["id"] for sev in ("High", "Critical")]
+    other_port = store.create(alert_type="congestion_escalation", port_id="antwerp", port_name="Antwerp",
+                              severity="High", title={"en": "t"}, message={"en": "m"}, evidence={},
+                              dedupe_key="a", snapshot=None)
+    store.get(ids[0])["created_at"] -= 60
+    m.housekeeping()
+    assert [store.get(i)["status"] for i in ids] == ["resolved", "open"]
+    assert store.get(other_port["id"])["status"] == "open"

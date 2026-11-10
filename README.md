@@ -35,7 +35,7 @@ A **Run demo alert** button raises a clearly-labelled demo escalation, so the fu
 
 Live tracking covers **nine ports on three continents**: Rotterdam, Antwerp, Felixstowe, Le Havre and Valencia (Europe), Singapore and Hong Kong (Asia), Los Angeles / Long Beach and New York / New Jersey (Americas). Every port's map area covers both its container terminals and the anchorages where ships wait, and each was checked against a live AIS capture before being added (sources are cited next to each entry in `backend/app/live/aisstream_client.py`). **Jebel Ali** is listed but has no free AIS receiver coverage, so it shows 0 vessels — use the synthetic scenarios for Gulf demos. Busan and Port Klang were tested and also have no free coverage. Real coverage there would need a paid satellite-AIS provider.
 
-The backend has a 103-test suite (`cd backend && python -m pytest`), with Claude mocked so it's free to run, plus a 20-case **exam set** (`backend/eval/`) that scores tier accuracy, retrieval and the grounding of Claude's advice. See [Evaluation](backend/README.md#evaluation).
+The backend has a 112-test suite (`cd backend && python -m pytest`), with Claude mocked so it's free to run, plus a 20-case **exam set** (`backend/eval/`) that scores tier accuracy, retrieval and the grounding of Claude's advice. See [Evaluation](backend/README.md#evaluation).
 
 The precedent corpus is a small hand-written set of well-known episodes, matched with lightweight term-overlap scoring rather than a vector database. Tier thresholds in [`backend/app/thresholds.py`](backend/app/thresholds.py) are currently UNCTAD-style placeholders.
 

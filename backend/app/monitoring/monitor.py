@@ -23,7 +23,8 @@ from app.agents.classification import LIVE_TIER_METRICS, classify_snapshot
 from app.live.aisstream_client import PORTS, build_port_snapshot, cache
 from app.monitoring.alerts import AlertError, alerts
 from app.monitoring.detectors import (
-    AnchorDragTracker, TierTracker, anchor_drag_alerts, drag_candidates, escalation_alert, weather_alert,
+    MIN_ALERT_TIER, AnchorDragTracker, TierTracker, anchor_drag_alerts, drag_candidates, escalation_alert,
+    tier_index, weather_alert,
 )
 from app.monitoring.history import history
 from app.monitoring.weather import fetch_forecast
@@ -42,6 +43,8 @@ COOLDOWN_SECONDS = {
     "weather_risk": 6 * 3600,
 }
 ADVISED_TYPES = ("congestion_escalation", "weather_risk")
+# An alert nobody has touched for this long is no longer current: close it automatically.
+ALERT_MAX_AGE_SECONDS = float(os.environ.get("ALERT_MAX_AGE_HOURS", 24)) * 3600
 
 SITUATION_NOTE = {
     "congestion_escalation": "Congestion has just escalated at this port and has been confirmed over consecutive checks.",
@@ -74,6 +77,8 @@ class Monitor:
     def start(self) -> None:
         history.load()
         alerts.load()
+        self.seed_from_history()
+        self.housekeeping()
         if self._task is None:
             self._task = asyncio.create_task(self._run_forever())
 
@@ -83,6 +88,31 @@ class Monitor:
         if self._task is not None:
             self._task.cancel()
             self._task = None
+
+    def seed_from_history(self) -> None:
+        """Pick up each port's last recorded tier, so a restart compares against it."""
+        for port_id in PORTS:
+            samples = history.samples(port_id, hours=1)
+            if samples:
+                self.tracker.seed(port_id, samples[-1]["tier"])
+
+    def housekeeping(self) -> None:
+        """Close alerts that are no longer current, so the list shows only what needs attention."""
+        now = time.time()
+        newest_seen: set[tuple[str, str]] = set()
+        for a in alerts.list():  # newest first
+            if a["status"] == "resolved" or a.get("demo"):
+                continue
+            key = (a["port_id"], a["type"])
+            if a["type"] == "anchor_drag" and "confirmed_after_ticks" not in (a.get("evidence") or {}):
+                alerts.auto_resolve(a["id"], "Raised by an earlier anchor-drag detector that also flagged ordinary "
+                                             "swinging and ships under way; closed automatically.")
+            elif a["type"] in ADVISED_TYPES and key in newest_seen:
+                alerts.auto_resolve(a["id"], "Replaced by a newer alert for this port; closed automatically.")
+            elif a["status"] == "open" and now - a["created_at"] > ALERT_MAX_AGE_SECONDS:
+                alerts.auto_resolve(a["id"], f"No action for {ALERT_MAX_AGE_SECONDS / 3600:g} hours; "
+                                             "closed automatically as no longer current.")
+            newest_seen.add(key)
 
     async def _run_forever(self) -> None:
         while True:
@@ -103,6 +133,7 @@ class Monitor:
             if port_snap["warming_up"]:
                 continue
             await self._check_port(port_id, port_snap)
+        self.housekeeping()
         self.last_tick_at = time.time()
         history.save()
 
@@ -126,8 +157,15 @@ class Monitor:
         # normal is known. Global thresholds alone would flag busy ports (e.g.
         # Singapore's anchorage) as critical on an ordinary day.
         if escalation and snap.get("queue_baseline") is not None:
-            spec = escalation_alert(port_id, port_name, escalation[0], escalation[1], cls, snap)
-            self.raise_alert(port_id, port_name, spec, snap)
+            # Already alerted at this level or worse and still open: nothing new to say.
+            if not any(tier_index(a["severity"]) >= tier_index(escalation[1])
+                       for a in alerts.active(port_id, "congestion_escalation")):
+                spec = escalation_alert(port_id, port_name, escalation[0], escalation[1], cls, snap)
+                self.raise_alert(port_id, port_name, spec, snap)
+        confirmed = self.tracker.confirmed(port_id)
+        if confirmed and tier_index(confirmed) < tier_index(MIN_ALERT_TIER):
+            for a in alerts.active(port_id, "congestion_escalation"):
+                alerts.auto_resolve(a["id"], f"Congestion back to {confirmed}; closed automatically.")
 
         dragging = self.drag_tracker.update(port_id, drag_candidates(cache.anchored_vessels(port_id)))
         for spec in anchor_drag_alerts(port_id, port_name, dragging):
@@ -135,8 +173,12 @@ class Monitor:
 
         forecast = await self._forecast(port_id)
         spec = weather_alert(port_id, port_name, forecast, self.tracker.confirmed(port_id) or cls["tier"])
-        if spec:
+        active_weather = alerts.active(port_id, "weather_risk")
+        if spec and not active_weather:  # one alert per spell of bad weather, not one every 6 hours
             self.raise_alert(port_id, port_name, spec, snap)
+        elif not spec and forecast:
+            for a in active_weather:
+                alerts.auto_resolve(a["id"], "Forecast no longer shows gale or fog; closed automatically.")
 
     async def _forecast(self, port_id: str) -> list[dict]:
         fetched_at, forecast = self._weather.get(port_id, (0.0, []))

@@ -32,8 +32,23 @@ def test_de_escalation_does_not_alert():
 
 
 def test_first_confirmation_alerts_only_when_already_bad():
-    assert TierTracker(confirm_ticks=1).update("a", "Medium") == ("Low", "Medium")
+    assert TierTracker(confirm_ticks=1).update("a", "High") == ("Low", "High")
     assert TierTracker(confirm_ticks=1).update("b", "Low") is None
+
+
+def test_default_alert_bar_is_high_not_merely_busier_than_usual():
+    tr = TierTracker(confirm_ticks=1)
+    assert tr.update("p", "Medium") is None             # ~20% busier than usual: no alert
+    assert tr.update("p", "High") == ("Medium", "High")
+    assert TierTracker(confirm_ticks=1, min_alert_tier="Medium").update("q", "Medium") == ("Low", "Medium")
+
+
+def test_seeded_tier_stops_restart_from_reporting_a_fresh_rise():
+    tr = TierTracker(confirm_ticks=1)
+    tr.seed("p", "Critical")                            # last tier recorded before the restart
+    assert tr.update("p", "Critical") is None
+    tr.seed("p", "Low")                                 # seeding never overrides a live value
+    assert tr.confirmed("p") == "Critical"
 
 
 # ---------------------------------------------------------------- anchor drag
@@ -168,6 +183,23 @@ def test_alert_invalid_transitions(store):
     store.acknowledge(a["id"])
     with pytest.raises(AlertError):
         store.acknowledge(a["id"])
+
+
+def test_auto_resolve_expires_unreviewed_drafts_but_keeps_decisions(store):
+    plain, draft, decided, drafting = (_create(store) for _ in range(4))
+    store.mark_generating(draft["id"]); store.set_advisory(draft["id"], {"tier": "High"})
+    store.mark_generating(decided["id"]); store.set_advisory(decided["id"], {"tier": "High"})
+    store.review_advisory(decided["id"], approve=False)
+    store.mark_generating(drafting["id"])
+
+    assert store.auto_resolve(plain["id"], "cleared") is True
+    assert store.get(plain["id"])["log"][-1]["by"] == "monitor"
+    assert store.auto_resolve(draft["id"], "cleared") is True
+    assert store.get(draft["id"])["advisory_status"] == "expired"     # never shared, never approved
+    assert store.auto_resolve(decided["id"], "cleared") is True
+    assert store.get(decided["id"])["advisory_status"] == "rejected"  # the person's decision stands
+    assert store.auto_resolve(drafting["id"], "cleared") is False     # still being drafted
+    assert [x["id"] for x in store.active("p", "congestion_escalation")] == [drafting["id"]]
 
 
 def test_alerts_persist_and_recover_interrupted_generation(store):

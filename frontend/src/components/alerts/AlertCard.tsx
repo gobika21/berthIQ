@@ -126,13 +126,13 @@ export function AlertCard({
           </div>
         )}
 
-        {advisory && ["pending_approval", "approved", "rejected"].includes(alert.advisory_status) && (
+        {advisory && ["pending_approval", "approved", "rejected", "expired"].includes(alert.advisory_status) && (
           <div
             className={cn(
               "flex flex-col gap-3 rounded-sm border px-4 py-3",
               alert.advisory_status === "pending_approval" && "border-accent bg-accent-soft",
               alert.advisory_status === "approved" && "border-tier-low/40 bg-tier-lowSoft",
-              alert.advisory_status === "rejected" && "border-border bg-sunken",
+              (alert.advisory_status === "rejected" || alert.advisory_status === "expired") && "border-border bg-sunken",
             )}
           >
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-ink">
@@ -142,7 +142,9 @@ export function AlertCard({
                   ? "advisoryPending"
                   : alert.advisory_status === "approved"
                     ? "advisoryApproved"
-                    : "advisoryRejected",
+                    : alert.advisory_status === "expired"
+                      ? "advisoryExpired"
+                      : "advisoryRejected",
               )}
             </div>
             {advisory.ai_status === "fallback" && (

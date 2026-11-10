@@ -69,13 +69,22 @@ A background monitor (`app/monitoring/monitor.py`) runs every `MONITOR_INTERVAL_
 
 | Detector | Fires when | Notes |
 |---|---|---|
-| Congestion escalation | The tier rises to Medium or above and holds for `MONITOR_CONFIRM_TICKS` (2) consecutive checks | Only once the port's usual queue is known (≈1 h of history); confirmation stops one noisy reading from raising an alert |
+| Congestion escalation | The tier rises to `MONITOR_MIN_ALERT_TIER` (High, i.e. at least 1.5× the usual queue) or above and holds for `MONITOR_CONFIRM_TICKS` (2) consecutive checks | Only once the port's usual queue is known (≈1 h of history); confirmation stops one noisy reading from raising an alert. Medium ("busier than usual") still shows on the board but no longer raises an alert: it was 51 of the first 111 escalation alerts |
 | Anchor drag | A ship reporting "at anchor" is more than `ANCHOR_DRAG_METERS` (800 m) from where it first anchored, at no more than `ANCHOR_DRAG_MAX_KNOTS` (3 kn), and keeps moving further away for `ANCHOR_DRAG_CONFIRM_TICKS` (2) checks in a row | A big ship swinging on its chain can sit 600 m+ from its first fix. Ships faster than 3 kn have left and not updated their AIS status: 20 of the first 24 live alerts were this, and all 24 were false by these rules. Such ships are also left out of the queue count |
 | Weather risk | The Open-Meteo forecast for the next 12 h shows gusts ≥ 34 kn (gale) or visibility ≤ 1,000 m | Severity is higher when a queue already exists |
 
 **How the live tier is decided.** Only the two measured metrics count: ships waiting and observed waiting time. The berth-occupancy figure from AIS (moored ships ÷ a hand-sourced container-berth count) is shown but not used, because it saturates at 100% at large multi-purpose ports. The queue is judged against **the port's own usual level** (the median of up to 7 days of history): below 1.2× usual is Low, under 1.5× Medium, under 2× High, and 2× or more Critical (`RELATIVE_QUEUE_THRESHOLDS` in `app/thresholds.py`; a floor of 3 ships stops near-empty ports looking dramatic). Until a port has about an hour of history (`MIN_BASELINE_SAMPLES`, 30), the global thresholds apply. Waiting time always uses the global hour thresholds, since hours mean the same at every port.
 
-Each alert type has a cooldown so the same event isn't raised repeatedly. For congestion and weather alerts, the agents draft an advisory automatically (capped at `AUTO_ADVISORY_MAX_PER_HOUR`, default 6; disable with `AUTO_ADVISORY=0`). The draft is marked `pending_approval`: **nothing AI-written counts as shared until a person approves it**, and an alert can't be resolved while advice is awaiting review. Every action is recorded in the alert's activity log.
+**Keeping the alert list meaningful.** Before this tuning, three days of live running left 166 alerts open. Most of those were repeats of the same ongoing events and leftovers from an earlier anchor-drag detector. The monitor now:
+
+- remembers each port's last tier across restarts (from the saved history), so a restart doesn't report an ongoing level as a fresh rise from Low (77 of 111 escalations had been "from Low");
+- raises no new congestion or weather alert while one for the same port is still open at that level or worse, and closes older duplicates when a newer alert replaces them;
+- closes congestion alerts itself once the port is back below the alert bar, and weather alerts once the forecast clears;
+- closes alerts nobody has touched for `ALERT_MAX_AGE_HOURS` (24), and alerts from the earlier anchor-drag detector.
+
+Every automatic close is logged as done by `monitor`, with the reason. An AI draft nobody reviewed is marked `expired`: it was never approved or shared. A person's approve or reject decision is never changed, and an advisory that is still being drafted is left alone. On the live data this took the list from 166 open alerts to 12.
+
+Each alert type also has a cooldown so the same event isn't raised repeatedly. For congestion and weather alerts, the agents draft an advisory automatically (capped at `AUTO_ADVISORY_MAX_PER_HOUR`, default 6; disable with `AUTO_ADVISORY=0`). The draft is marked `pending_approval`: **nothing AI-written counts as shared until a person approves it**, and an alert can't be resolved while advice is awaiting review. Every action is recorded in the alert's activity log.
 
 Alerts and history are saved to `app/live/.alerts.json` and `app/live/.history.json` (gitignored), so they survive restarts.
 
@@ -97,6 +106,7 @@ Every assumption (service speed, fuel burn, fuel price, the IMO CO₂ factor of 
 | `ALLOWED_ORIGINS` | `http://localhost:3000` | Comma-separated CORS origins — set to your frontend URL in production |
 | `LLM_RATE_LIMIT_PER_MINUTE` | `6` | Per-IP limit on endpoints that call Claude (429 when exceeded) |
 | `MONITOR_INTERVAL_SECONDS` | `120` | How often the monitor checks every port |
+| `MONITOR_MIN_ALERT_TIER` / `ALERT_MAX_AGE_HOURS` | `High` / `24` | Lowest tier that raises a congestion alert; age after which an untouched alert closes itself |
 | `AUTO_ADVISORY` / `AUTO_ADVISORY_MAX_PER_HOUR` | `1` / `6` | Automatic advice drafting for alerts, and its hourly cap |
 | `DEMO_MODE` | `1` | Enables `POST /demo/replay` |
 | `CLAUDE_MODEL` | `claude-opus-4-5` | Model used by the decision-support and drafting agents |
@@ -116,7 +126,7 @@ pip install -r requirements-dev.txt
 python -m pytest
 ```
 
-103 tests cover input validation, tier classification, JSON parsing and retry, Claude timeouts and the rule-based fallback, token and cost tracking, all three detectors, the impact model, the alert workflow, the monitor loop (with a fake AIS feed and forecast), rate limiting, CORS and the API. Claude is mocked throughout, so the suite is free and runs in about a second.
+112 tests cover input validation, tier classification, JSON parsing and retry, Claude timeouts and the rule-based fallback, token and cost tracking, all three detectors, alert de-duplication and automatic closing, the impact model, the alert workflow, the monitor loop (with a fake AIS feed and forecast), rate limiting, CORS and the API. Claude is mocked throughout, so the suite is free and runs in about a second.
 
 ## Evaluation
 

@@ -122,7 +122,7 @@ export interface AdvisoryUsage {
 
 export type AlertType = "congestion_escalation" | "anchor_drag" | "weather_risk";
 export type AlertStatus = "open" | "acknowledged" | "resolved";
-export type AdvisoryStatus = "none" | "generating" | "pending_approval" | "approved" | "rejected" | "failed";
+export type AdvisoryStatus = "none" | "generating" | "pending_approval" | "approved" | "rejected" | "failed" | "expired";
 
 export interface AlertLogEntry {
   at: number;
