@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import { Sparkles } from "lucide-react";
+import { Info, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardBody } from "@/components/ui/Card";
 import { ErrorBanner } from "@/components/ui/ErrorBanner";
@@ -12,11 +12,14 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { TierBadge } from "@/components/ui/TierBadge";
 import { LiveSignalPanel } from "@/components/board/LiveSignalPanel";
 import { AdvisoryCard } from "./AdvisoryCard";
+import { EvidencePanel } from "./EvidencePanel";
+import { ImpactPanel } from "./ImpactPanel";
 import { LoadingSteps } from "./LoadingSteps";
 import { useLocale } from "@/components/LocaleProvider";
 import { api, ApiError } from "@/lib/api";
 import { useLiveVesselQueue } from "@/lib/hooks";
 import { TIER_STYLES } from "@/lib/tier";
+import { fill } from "@/lib/format";
 import type { AdvisoryResult, PortSnapshot } from "@/lib/types";
 
 // Leaflet touches `window` at import time, so it can only run in the browser.
@@ -43,6 +46,8 @@ export function PortAdvisoryView({ portId }: { portId: string }) {
   const [submittedSnapshot, setSubmittedSnapshot] = useState<PortSnapshot | null>(null);
   const [running, setRunning] = useState(false);
   const [runError, setRunError] = useState<string | null>(null);
+  // Screen-reader announcement for the ~20 s advisory run (start and finish).
+  const [announcement, setAnnouncement] = useState("");
   // Bumped on every runAdvisoryFor call so a slow, now-stale request can't overwrite
   // the result of a newer one that resolved first (matters once language switches can
   // fire requests back-to-back).
@@ -92,11 +97,13 @@ export function PortAdvisoryView({ portId }: { portId: string }) {
     const requestId = ++requestIdRef.current;
     setRunning(true);
     setRunError(null);
+    setAnnouncement(t("srAdvisoryRunning"));
     try {
       const advisory = await api.runAdvisory(snapshot);
       if (requestId !== requestIdRef.current) return; // a newer request already resolved
       setResult(advisory);
       setSubmittedSnapshot(snapshot);
+      setAnnouncement(fill(t("srAdvisoryReady"), { tier: t(TIER_STYLES[advisory.tier].labelKey) }));
     } catch (e) {
       if (requestId !== requestIdRef.current) return;
       setRunError(e instanceof ApiError ? e.message : t("somethingWentWrong"));
@@ -133,6 +140,9 @@ export function PortAdvisoryView({ portId }: { portId: string }) {
 
   return (
     <div className="flex flex-col gap-6">
+      <p className="sr-only" role="status" aria-live="polite">
+        {announcement}
+      </p>
       <h2 className="text-lg font-semibold text-ink">{live.port_name}</h2>
 
       <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-5">
@@ -191,7 +201,7 @@ export function PortAdvisoryView({ portId }: { portId: string }) {
                 <TierBadge tier={result.tier} />
                 <p className="text-sm text-ink-muted">{result.tier_reasoning}</p>
               </div>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-3">
                 <MetricTile
                   label={t("howFullThePort")}
                   value={`${Math.round(submittedSnapshot.berth_occupancy_rate * 100)}%`}
@@ -206,12 +216,22 @@ export function PortAdvisoryView({ portId }: { portId: string }) {
             <div className="mb-3 text-xs font-semibold uppercase tracking-wide text-ink-muted">
               {t("whatEachGroupShouldDo")}
             </div>
+            {result.ai_status === "fallback" && (
+            <div role="status"
+              className="mb-3 flex items-start gap-2.5 rounded-sm border border-tier-medium/30 bg-tier-mediumSoft px-4 py-3 text-sm text-ink">
+              <Info className="mt-0.5 h-4 w-4 flex-shrink-0" strokeWidth={1.75} aria-hidden="true" />
+              <span>{t("aiFallbackNotice")}</span>
+            </div>
+          )}
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
               {result.recommendations.map((rec) => (
                 <AdvisoryCard key={rec.persona} recommendation={rec} message={result.advisories[rec.persona]} />
               ))}
             </div>
           </div>
+
+          {result.impact && <ImpactPanel impact={result.impact} />}
+          {result.evidence && <EvidencePanel evidence={result.evidence} precedents={result.precedents ?? []} />}
         </div>
       )}
     </div>

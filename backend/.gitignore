@@ -3,3 +3,7 @@ __pycache__/
 *.pyc
 .env
 app/live/.vessel_cache.json
+app/live/.history.json
+app/live/.alerts.json
+app/live/*.tmp
+.pytest_cache/

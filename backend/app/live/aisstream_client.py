@@ -29,6 +29,8 @@ import time
 
 import websockets
 
+from app.geo import haversine_m
+
 logger = logging.getLogger(__name__)
 
 AISSTREAM_URL = "wss://stream.aisstream.io/v0/stream"
@@ -43,6 +45,9 @@ NAV_STATUS_UNDER_WAY_ENGINE = 0
 NAV_STATUS_AT_ANCHOR = 1
 NAV_STATUS_MOORED = 5
 NAV_STATUS_NOT_DEFINED = 15
+
+# Above this speed, an "at anchor" status is stale: the ship is under way (see upsert).
+STALE_ANCHOR_STATUS_KNOTS = 3.0
 
 # Anchored vessels report infrequently; a vessel not heard from in this long is dropped from the cache.
 STALE_AFTER_SECONDS = 8 * 60
@@ -78,6 +83,18 @@ PORTS = {
         # PSA Singapore's Pasir Panjang + Tanjong Pagar/Keppel container berths, published count.
         "berth_count": 57,
     },
+    "hong_kong": {
+        "name": {"en": "Hong Kong", "ar": "هونغ كونغ"},
+        "country": {"en": "Hong Kong, China", "ar": "هونغ كونغ، الصين"},
+        # Kwai Tsing container terminals (~22.34N 114.11E) and the western harbour
+        # anchorages where ocean-going ships wait.
+        "bbox": [[22.25, 113.95], [22.40, 114.15]],
+        "live_coverage": True,
+        "note": {"en": EN_LIVE_NOTE, "ar": AR_LIVE_NOTE},
+        # Official: Hong Kong Marine Department, "Port of Hong Kong in Figures" —
+        # Kwai Tsing: 9 terminals, 24 berths, ~7,794 m of deep-water frontage.
+        "berth_count": 24,
+    },
     "los_angeles": {
         "name": {"en": "Los Angeles / Long Beach", "ar": "لوس أنجلوس / لونغ بيتش"},
         "country": {"en": "United States", "ar": "الولايات المتحدة"},
@@ -87,6 +104,20 @@ PORTS = {
         # Combined container berths across both ports' terminals, published counts.
         "berth_count": 32,
     },
+    "new_york_nj": {
+        "name": {"en": "New York / New Jersey", "ar": "نيويورك / نيوجيرسي"},
+        "country": {"en": "United States", "ar": "الولايات المتحدة"},
+        # Port Newark/Elizabeth (~40.68N 74.15W), Bayonne, Howland Hook and Red Hook
+        # terminals, the harbour anchorages (Stapleton, Bay Ridge, Gravesend) and the
+        # Ambrose anchorage offshore, where container ships queue at busy times.
+        "bbox": [[40.38, -74.20], [40.72, -73.70]],
+        "live_coverage": True,
+        "note": {"en": EN_LIVE_NOTE, "ar": AR_LIVE_NOTE},
+        # Derived: ~27,820 ft (8.5 km) of container berth length across Maher 10,128,
+        # APM 6,000, PNCT 4,800, GCT New York 3,012, GCT Bayonne 1,800 and Red Hook
+        # 2,080 ft (NAIOP port report) ÷ 350 m. PANYNJ publishes no berth count.
+        "berth_count": 24,
+    },
     "antwerp": {
         "name": {"en": "Antwerp", "ar": "أنتويرب"},
         "country": {"en": "Belgium", "ar": "بلجيكا"},
@@ -95,6 +126,59 @@ PORTS = {
         "note": {"en": EN_LIVE_NOTE, "ar": AR_LIVE_NOTE},
         # Container berths at Antwerp Gateway, MPET and DP World Antwerp, published counts.
         "berth_count": 24,
+    },
+    # ------------------------------------------------------------------------------
+    # Ports added Nov 2026. Each was checked two ways before being added:
+    #   1. Live coverage: a 4-minute aisstream.io capture with these exact boxes
+    #      (ships seen / at anchor): Felixstowe 15/1, Valencia 28/0, NY/NJ 51/3,
+    #      Le Havre 45/3, Hong Kong 78/7. Busan and Port Klang were also tested and
+    #      returned 0 ships (no free receiver coverage), so they were not added;
+    #      Hamburg was left out because its waiting ships anchor ~100 km away in the
+    #      German Bight, and Piraeus because published berth figures conflict.
+    #   2. Boxes cover both the container terminals and the anchorages where ships
+    #      actually wait, per the sources cited on each entry.
+    # Berth counts only feed the rough occupancy estimate, which doesn't drive tiers.
+    # Where no official count is published, it's derived as container quay length
+    # ÷ 350 m (a typical large-container-ship berth) and marked "derived".
+    # ------------------------------------------------------------------------------
+    "felixstowe": {
+        "name": {"en": "Felixstowe", "ar": "فيليكستو"},
+        "country": {"en": "United Kingdom", "ar": "المملكة المتحدة"},
+        # Port of Felixstowe (51.95N 1.31E), Harwich anchorage (~51.94N 1.49E, Harwich
+        # Haven Authority area) and the Sunk area to the east, where deep-sea ships wait
+        # for pilots (Sunk pilot boarding ~3.4 nm E of Sunk Inner, 51°51.5'N 1°40.5'E).
+        "bbox": [[51.80, 1.20], [51.98, 1.95]],
+        "live_coverage": True,
+        "note": {"en": EN_LIVE_NOTE, "ar": AR_LIVE_NOTE},
+        # 10 container berths, 9 active (Port of Felixstowe; ~3,773 m of container quay
+        # per the port's 2023 brochure).
+        "berth_count": 9,
+    },
+    "le_havre": {
+        "name": {"en": "Le Havre", "ar": "لوهافر"},
+        "country": {"en": "France", "ar": "فرنسا"},
+        # Port 2000 / HAROPA container terminals (~49.47N 0.15E) and the outer anchorage
+        # off the port entrance.
+        "bbox": [[49.40, -0.20], [49.60, 0.25]],
+        "live_coverage": True,
+        "note": {"en": EN_LIVE_NOTE, "ar": AR_LIVE_NOTE},
+        # HAROPA 2026 container-terminal catalogue: Terminal de France 4 berths +
+        # Terminaux de Normandie 6 berths (Terminal de l'Atlantique's count isn't published).
+        "berth_count": 10,
+    },
+    "valencia": {
+        "name": {"en": "Valencia", "ar": "فالنسيا"},
+        "country": {"en": "Spain", "ar": "إسبانيا"},
+        # Container terminals plus both official anchorages (Valenciaport port guide):
+        #   North: 39°26.170'–39°27.251'N, 0°12.714'–0°14.804'W
+        #   South: 39°23.000'–39°24.297'N, 0°12.714'–0°17.029'W
+        "bbox": [[39.375, -0.345], [39.465, -0.205]],
+        "live_coverage": True,
+        "note": {"en": EN_LIVE_NOTE, "ar": AR_LIVE_NOTE},
+        # Derived: 4,767 m of container quay per the same Valenciaport guide —
+        # CSP 2,310 m (Costa 538 + Príncipe Felipe 1,440 + Este 332), MSC 776 m
+        # (Transversal Costa), APM 1,681 m (Llovera 488 + Levante 1–3 1,193) — ÷ 350 m.
+        "berth_count": 14,
     },
     "jebel_ali": {
         "name": {"en": "Jebel Ali", "ar": "جبل علي"},
@@ -148,7 +232,8 @@ class VesselCache:
         has_status = nav_status is not None and nav_status != NAV_STATUS_NOT_DEFINED
         if has_status:
             at_berth = nav_status == NAV_STATUS_MOORED
-            is_waiting = nav_status == NAV_STATUS_AT_ANCHOR
+            # Stale 'at anchor' on a ship under way isn't a ship waiting (see below).
+            is_waiting = nav_status == NAV_STATUS_AT_ANCHOR and sog_knots <= STALE_ANCHOR_STATUS_KNOTS
         else:
             at_berth = False
             is_waiting = sog_knots < WAITING_SPEED_KNOTS
@@ -162,6 +247,22 @@ class VesselCache:
         else:
             waiting_since = None
 
+        # Remember where an anchored vessel first reported "at anchor", so the monitor
+        # can spot one that keeps moving away from that point (possible anchor drag).
+        # Only the explicit AIS status counts here — a slow-moving ship with no status
+        # isn't necessarily anchored.
+        # A ship doing more than a few knots isn't anchored, whatever its status says:
+        # it has weighed anchor without updating AIS. Drop its anchor point, so when it
+        # anchors again somewhere else the new spot becomes the reference instead of the
+        # old one (which would look like kilometres of drift).
+        at_anchor = has_status and nav_status == NAV_STATUS_AT_ANCHOR and sog_knots <= STALE_ANCHOR_STATUS_KNOTS
+        if at_anchor and existing and existing.get("anchor_lat") is not None:
+            anchor_lat, anchor_lon = existing["anchor_lat"], existing["anchor_lon"]
+        elif at_anchor:
+            anchor_lat, anchor_lon = lat, lon
+        else:
+            anchor_lat = anchor_lon = None
+
         self._vessels[port_id][mmsi] = {
             "sog_knots": sog_knots,
             "lat": lat,
@@ -170,7 +271,27 @@ class VesselCache:
             "waiting_since": waiting_since,
             "at_berth": at_berth,
             "is_waiting": is_waiting,
+            "anchor_lat": anchor_lat,
+            "anchor_lon": anchor_lon,
         }
+
+    def anchored_vessels(self, port_id: str) -> list[dict]:
+        """Fresh vessels reporting 'at anchor', with how far each has moved from its anchor point."""
+        now = time.time()
+        result = []
+        for mmsi, v in self._vessels.get(port_id, {}).items():
+            if v.get("anchor_lat") is None or now - v["last_seen"] > STALE_AFTER_SECONDS:
+                continue
+            result.append({
+                "mmsi": mmsi,
+                "lat": v["lat"],
+                "lon": v["lon"],
+                "anchor_lat": v["anchor_lat"],
+                "anchor_lon": v["anchor_lon"],
+                "drift_m": round(haversine_m(v["anchor_lat"], v["anchor_lon"], v["lat"], v["lon"])),
+                "speed_knots": v["sog_knots"],
+            })
+        return result
 
     def snapshot(self, port_id: str, include_positions: bool = False, lang: str = "en") -> dict:
         now = time.time()

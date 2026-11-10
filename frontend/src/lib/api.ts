@@ -1,4 +1,4 @@
-import type { AdvisoryResult, LiveVesselQueue, PortSnapshot, PortSummary } from "./types";
+import type { AdvisoryResult, Alert, AlertStatus, LiveVesselQueue, PortSnapshot, PortSummary } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_BERTHIQ_API_URL ?? "http://localhost:8000";
 
@@ -32,4 +32,11 @@ export const api = {
   liveVesselQueueAll: (lang = "en") => request<LiveVesselQueue[]>(`/live/vessel-queue/all?lang=${lang}`),
   runAdvisory: (snapshot: PortSnapshot) =>
     request<AdvisoryResult>("/advisory", { method: "POST", body: JSON.stringify(snapshot) }),
+
+  listAlerts: (status?: AlertStatus) => request<Alert[]>(`/alerts${status ? `?status=${status}` : ""}`),
+  alertAction: (id: string, action: "acknowledge" | "approve" | "reject" | "resolve", note?: string) =>
+    request<Alert>(`/alerts/${id}/${action}`, { method: "POST", body: JSON.stringify({ note: note ?? null }) }),
+  requestAlertAdvisory: (id: string) => request<Alert>(`/alerts/${id}/advisory`, { method: "POST" }),
+  demoReplay: (portId = "rotterdam") =>
+    request<Alert>(`/demo/replay?port=${encodeURIComponent(portId)}`, { method: "POST" }),
 };

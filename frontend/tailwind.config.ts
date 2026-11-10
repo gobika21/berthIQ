@@ -15,7 +15,7 @@ const config: Config = {
         ink: {
           DEFAULT: "#F7EEE3",
           muted: "#CBB79E",
-          faint: "#93816E",
+          faint: "#AE9A84", // ≥4.5:1 on cards even over the brightest part of the photo
         },
         accent: {
           DEFAULT: "#E8A33D",
@@ -30,6 +30,7 @@ const config: Config = {
           high: "#FB923C",
           highSoft: "rgba(251, 146, 60, 0.16)",
           critical: "#F87171",
+          criticalText: "#FCA5A5", // readable red for text on dark/soft-red backgrounds
           criticalSoft: "rgba(248, 113, 113, 0.16)",
         },
       },

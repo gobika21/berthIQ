@@ -29,7 +29,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         )}
         {...props}
       >
-        {loading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+        {loading && <Loader2 className="h-3.5 w-3.5 motion-safe:animate-spin" />}
         {children}
       </button>
     );

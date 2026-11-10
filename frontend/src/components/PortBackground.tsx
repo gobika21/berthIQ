@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { ShippingRoutes } from "./ShippingRoutes";
 
 // Fixed, full-viewport backdrop: a golden-hour container-terminal photo
 // (frontend/public/port_terminal_sunset_full.png, 1920x1080), covering the
@@ -31,6 +32,10 @@ export function PortBackground() {
             "linear-gradient(to right, rgba(5,11,22,0.6) 0%, rgba(5,11,22,0) 15%, rgba(5,11,22,0) 85%, rgba(5,11,22,0.6) 100%)",
         }}
       />
+      {/* Extra dimming so the map reads clearly and text over the photo keeps ≥4.5:1 contrast. */}
+      <div className="absolute inset-0" style={{ background: "rgba(5,11,22,0.55)" }} />
+      {/* Dotted world map with BerthIQ's ports and live-looking trade-lane pulses, screen-blended over the photo. */}
+      <ShippingRoutes />
     </div>
   );
 }

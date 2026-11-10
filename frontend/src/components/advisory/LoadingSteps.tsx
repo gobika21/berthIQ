@@ -30,7 +30,7 @@ export function LoadingSteps() {
             {done ? (
               <Check className="h-4 w-4 flex-shrink-0 text-tier-low" strokeWidth={2.5} />
             ) : current ? (
-              <Loader2 className="h-4 w-4 flex-shrink-0 animate-spin text-accent" strokeWidth={2.5} />
+              <Loader2 className="h-4 w-4 flex-shrink-0 motion-safe:animate-spin text-accent" strokeWidth={2.5} />
             ) : (
               <span className="h-4 w-4 flex-shrink-0 rounded-full border border-border" />
             )}

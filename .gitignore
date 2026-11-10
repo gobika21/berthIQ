@@ -5,3 +5,8 @@ node_modules/
 dist/
 .env
 .DS_Store
+
+# iCloud sync leftovers
+frontend/.next.stale-icloud/
+backend/venv.broken-old-path/
+backend/app/live/.* 2.json

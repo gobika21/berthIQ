@@ -6,6 +6,8 @@ import re
 from app.claude_client import ask_claude
 from app.models.schema import AdvisoryState
 
+PERSONAS = ("carrier", "trucking_company", "terminal_operator")
+
 SYSTEM_PROMPT = """You are a port operations decision-support analyst. Given a congestion \
 snapshot, its tier, the reasoning behind that tier, and summaries of comparable past \
 congestion episodes, produce concrete recommendations for three stakeholders: a carrier, \
@@ -53,18 +55,75 @@ def decision_support_node(state: AdvisoryState) -> AdvisoryState:
         f"Port: {snapshot['port_name']}\n"
         f"Congestion level: {tier}\n"
         f"Why: {tier_reasoning}\n"
-        f"How full the port is: {round(snapshot['berth_occupancy_rate'] * 100)}%\n"
-        f"Ships currently waiting: {snapshot['vessel_queue_length']}\n"
+        + (
+            f"How full the port is: {round(snapshot['berth_occupancy_rate'] * 100)}%\n"
+            if "berth_occupancy_rate" in (snapshot.get("tier_metrics") or ["berth_occupancy_rate"])
+            # The live estimate saturates at big ports. Telling the model "don't rely on it" wasn't
+            # enough (the exam set caught it quoting "99% capacity"), so the number isn't sent at all.
+            else "How full the port is: not reliably measured from live ship tracking — do not quote "
+                 "or estimate a percentage\n"
+        )
+        + f"Ships currently waiting: {snapshot['vessel_queue_length']}"
+        + (f" (this port's usual level is about {round(snapshot['queue_baseline'])})"
+           if snapshot.get("queue_baseline") is not None else "")
+        + "\n"
         f"Average wait time: {snapshot['avg_waiting_time_hours']} hours\n\n"
         f"Comparable past episodes:\n{precedent_text}\n"
     )
+    # Set by the monitor when advice is drafted for an alert (e.g. an incoming gale),
+    # so recommendations address the actual event rather than the numbers alone.
+    if snapshot.get("situation"):
+        user_prompt += f"\nCurrent situation: {snapshot['situation']}\n"
 
+    # One retry: if the model's reply doesn't parse or doesn't match the schema,
+    # send the error back so it can correct itself instead of failing the request.
     raw = ask_claude(system_prompt, user_prompt)
-    recommendations = json.loads(_strip_code_fence(raw))
+    try:
+        recommendations = _parse_recommendations(raw)
+    except ValueError as exc:
+        retry_prompt = (
+            f"{user_prompt}\n\nYour previous reply was invalid ({exc}). "
+            "Reply again with ONLY the JSON array described in your instructions."
+        )
+        recommendations = _parse_recommendations(ask_claude(system_prompt, retry_prompt))
 
     return {"recommendations": recommendations}
 
 
 def _strip_code_fence(text: str) -> str:
     match = re.search(r"```(?:json)?\s*(.*?)\s*```", text, re.DOTALL)
-    return match.group(1) if match else text
+    if match:
+        return match.group(1)
+    # Tolerate prose around a bare array, e.g. "Here you go: [...]"
+    start, end = text.find("["), text.rfind("]")
+    return text[start : end + 1] if start != -1 and end > start else text
+
+
+def _parse_recommendations(raw: str) -> list[dict]:
+    """Parse and validate the model's reply; raises ValueError with a readable reason."""
+    try:
+        data = json.loads(_strip_code_fence(raw))
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"not valid JSON: {exc.msg}") from exc
+
+    if not isinstance(data, list):
+        raise ValueError("expected a JSON array")
+
+    by_persona: dict[str, dict] = {}
+    for item in data:
+        if not isinstance(item, dict):
+            raise ValueError("each array item must be an object")
+        persona = item.get("persona")
+        action, reasoning = item.get("action"), item.get("reasoning")
+        if persona not in PERSONAS:
+            raise ValueError(f"unknown persona {persona!r}")
+        if not isinstance(action, str) or not action.strip() or not isinstance(reasoning, str) or not reasoning.strip():
+            raise ValueError(f"{persona} needs non-empty 'action' and 'reasoning' strings")
+        by_persona[persona] = {"persona": persona, "action": action.strip(), "reasoning": reasoning.strip()}
+
+    missing = [p for p in PERSONAS if p not in by_persona]
+    if missing:
+        raise ValueError(f"missing personas: {missing}")
+
+    # Stable order (carrier, trucking, terminal) regardless of how the model ordered them
+    return [by_persona[p] for p in PERSONAS]

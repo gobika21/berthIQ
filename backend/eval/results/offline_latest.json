@@ -1,0 +1,318 @@
+{
+  "run_at": "2026-11-10T06:03:20+00:00",
+  "mode": "offline",
+  "summary": {
+    "tier": {
+      "passed": 19,
+      "total": 19,
+      "rate": 1.0
+    },
+    "retrieval_hit@2": {
+      "passed": 13,
+      "total": 13,
+      "rate": 1.0
+    },
+    "driving_metrics": {
+      "passed": 10,
+      "total": 10,
+      "rate": 1.0
+    },
+    "validation": {
+      "passed": 1,
+      "total": 1,
+      "rate": 1.0
+    }
+  },
+  "cases": [
+    {
+      "id": "E01",
+      "category": "tier",
+      "checks": {
+        "tier": true
+      },
+      "tier": "Low",
+      "retrieved": [
+        "la-long-beach-2021",
+        "suez-2021"
+      ]
+    },
+    {
+      "id": "E02",
+      "category": "tier",
+      "checks": {
+        "tier": true,
+        "retrieval_hit@2": true
+      },
+      "tier": "Medium",
+      "retrieved": [
+        "rotterdam-2022",
+        "suez-2021"
+      ]
+    },
+    {
+      "id": "E03",
+      "category": "tier",
+      "checks": {
+        "tier": true,
+        "retrieval_hit@2": true
+      },
+      "tier": "High",
+      "retrieved": [
+        "suez-2021",
+        "la-long-beach-2021"
+      ]
+    },
+    {
+      "id": "E04",
+      "category": "tier",
+      "checks": {
+        "tier": true,
+        "retrieval_hit@2": true
+      },
+      "tier": "Critical",
+      "retrieved": [
+        "la-long-beach-2021",
+        "yantian-2021"
+      ]
+    },
+    {
+      "id": "E05",
+      "category": "boundary",
+      "checks": {
+        "tier": true,
+        "driving_metrics": true,
+        "retrieval_hit@2": true
+      },
+      "tier": "High",
+      "driving_metrics": [
+        "vessel_queue_length"
+      ],
+      "retrieved": [
+        "suez-2021",
+        "la-long-beach-2021"
+      ]
+    },
+    {
+      "id": "E06",
+      "category": "boundary",
+      "checks": {
+        "tier": true,
+        "driving_metrics": true,
+        "retrieval_hit@2": true
+      },
+      "tier": "Critical",
+      "driving_metrics": [
+        "avg_waiting_time_hours"
+      ],
+      "retrieved": [
+        "la-long-beach-2021",
+        "suez-2021"
+      ]
+    },
+    {
+      "id": "E07",
+      "category": "boundary",
+      "checks": {
+        "tier": true,
+        "driving_metrics": true,
+        "retrieval_hit@2": true
+      },
+      "tier": "Critical",
+      "driving_metrics": [
+        "berth_occupancy_rate"
+      ],
+      "retrieved": [
+        "yantian-2021",
+        "shanghai-2022"
+      ]
+    },
+    {
+      "id": "E08",
+      "category": "boundary",
+      "checks": {
+        "tier": true,
+        "driving_metrics": true,
+        "retrieval_hit@2": true
+      },
+      "tier": "High",
+      "driving_metrics": [
+        "berth_occupancy_rate",
+        "avg_waiting_time_hours"
+      ],
+      "retrieved": [
+        "suez-2021",
+        "yantian-2021"
+      ]
+    },
+    {
+      "id": "E09",
+      "category": "tier",
+      "checks": {
+        "tier": true,
+        "driving_metrics": true,
+        "retrieval_hit@2": true
+      },
+      "tier": "Critical",
+      "driving_metrics": [
+        "avg_waiting_time_hours"
+      ],
+      "retrieved": [
+        "la-long-beach-2021",
+        "suez-2021"
+      ]
+    },
+    {
+      "id": "E10",
+      "category": "port-relative",
+      "checks": {
+        "tier": true,
+        "driving_metrics": true
+      },
+      "tier": "Medium",
+      "driving_metrics": [
+        "avg_waiting_time_hours"
+      ],
+      "retrieved": [
+        "rotterdam-2022",
+        "suez-2021"
+      ]
+    },
+    {
+      "id": "E11",
+      "category": "port-relative",
+      "checks": {
+        "tier": true,
+        "driving_metrics": true,
+        "retrieval_hit@2": true
+      },
+      "tier": "High",
+      "driving_metrics": [
+        "vessel_queue_length"
+      ],
+      "retrieved": [
+        "suez-2021",
+        "la-long-beach-2021"
+      ]
+    },
+    {
+      "id": "E12",
+      "category": "port-relative",
+      "checks": {
+        "tier": true,
+        "driving_metrics": true,
+        "retrieval_hit@2": true
+      },
+      "tier": "Critical",
+      "driving_metrics": [
+        "vessel_queue_length"
+      ],
+      "retrieved": [
+        "la-long-beach-2021",
+        "suez-2021"
+      ]
+    },
+    {
+      "id": "E13",
+      "category": "port-relative",
+      "checks": {
+        "tier": true,
+        "driving_metrics": true
+      },
+      "tier": "Medium",
+      "driving_metrics": [
+        "vessel_queue_length"
+      ],
+      "retrieved": [
+        "la-long-beach-2021",
+        "suez-2021"
+      ]
+    },
+    {
+      "id": "E14",
+      "category": "port-relative",
+      "checks": {
+        "tier": true,
+        "driving_metrics": true,
+        "retrieval_hit@2": true
+      },
+      "tier": "High",
+      "driving_metrics": [
+        "vessel_queue_length"
+      ],
+      "retrieved": [
+        "suez-2021",
+        "la-long-beach-2021"
+      ]
+    },
+    {
+      "id": "E15",
+      "category": "arabic",
+      "checks": {
+        "tier": true,
+        "retrieval_hit@2": true
+      },
+      "tier": "Critical",
+      "retrieved": [
+        "yantian-2021",
+        "la-long-beach-2021"
+      ]
+    },
+    {
+      "id": "E16",
+      "category": "arabic",
+      "checks": {
+        "tier": true
+      },
+      "tier": "Low",
+      "retrieved": [
+        "yantian-2021",
+        "la-long-beach-2021"
+      ]
+    },
+    {
+      "id": "E17",
+      "category": "situation",
+      "checks": {
+        "tier": true,
+        "retrieval_hit@2": true
+      },
+      "tier": "Medium",
+      "retrieved": [
+        "rotterdam-2022",
+        "suez-2021"
+      ]
+    },
+    {
+      "id": "E18",
+      "category": "situation",
+      "checks": {
+        "tier": true
+      },
+      "tier": "Medium",
+      "retrieved": [
+        "rotterdam-2022",
+        "la-long-beach-2021"
+      ]
+    },
+    {
+      "id": "E19",
+      "category": "guardrail",
+      "checks": {
+        "tier": true
+      },
+      "tier": "Medium",
+      "retrieved": [
+        "rotterdam-2022",
+        "suez-2021"
+      ]
+    },
+    {
+      "id": "E20",
+      "category": "guardrail",
+      "checks": {
+        "validation": true
+      },
+      "rejected": "'berth_occupancy_rate' is a fraction between 0 and 1 (e.g. 0.85 for 85%), got 1.4"
+    }
+  ]
+}

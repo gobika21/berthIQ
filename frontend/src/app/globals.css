@@ -11,6 +11,13 @@ body {
   color: theme("colors.ink.DEFAULT");
 }
 
+/* Strong, consistent keyboard focus ring (the browser default is too faint on this dark theme). */
+:focus-visible {
+  outline: 3px solid theme("colors.accent.hover");
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 ::selection {
   background-color: theme("colors.accent.soft");
   color: theme("colors.accent.hover");

@@ -16,7 +16,7 @@ export const TIER_STYLES: Record<
   },
   High: { text: "text-tier-high", bg: "bg-tier-highSoft", border: "border-tier-high", labelKey: "tierHigh" },
   Critical: {
-    text: "text-tier-critical",
+    text: "text-tier-criticalText",
     bg: "bg-tier-criticalSoft",
     border: "border-tier-critical",
     labelKey: "tierCritical",

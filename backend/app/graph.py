@@ -29,6 +29,12 @@ def build_graph():
     return graph.compile()
 
 
+_compiled_graph = None
+
+
 def run_pipeline(snapshot: dict) -> dict:
-    app_graph = build_graph()
-    return app_graph.invoke({"snapshot": snapshot})
+    # Compile once and reuse — the graph structure never changes between requests.
+    global _compiled_graph
+    if _compiled_graph is None:
+        _compiled_graph = build_graph()
+    return _compiled_graph.invoke({"snapshot": snapshot})

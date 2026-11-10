@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { Header } from "@/components/Header";
 import { LocaleProvider } from "@/components/LocaleProvider";
 import { PortBackground } from "@/components/PortBackground";
+import { SkipLink } from "@/components/SkipLink";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -18,8 +19,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen bg-canvas font-sans text-ink antialiased">
         <PortBackground />
         <LocaleProvider>
+          <SkipLink />
           <Header />
-          <main>{children}</main>
+          <main id="main-content" tabIndex={-1} className="focus:outline-none">
+            {children}
+          </main>
         </LocaleProvider>
       </body>
     </html>

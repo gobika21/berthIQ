@@ -1,0 +1,1026 @@
+{
+  "run_at": "2026-11-10T06:03:13+00:00",
+  "mode": "llm",
+  "summary": {
+    "pipeline_ok": {
+      "passed": 19,
+      "total": 19,
+      "rate": 1.0
+    },
+    "tier": {
+      "passed": 19,
+      "total": 19,
+      "rate": 1.0
+    },
+    "all_personas": {
+      "passed": 19,
+      "total": 19,
+      "rate": 1.0
+    },
+    "cites_data": {
+      "passed": 19,
+      "total": 19,
+      "rate": 1.0
+    },
+    "plain_language": {
+      "passed": 19,
+      "total": 19,
+      "rate": 1.0
+    },
+    "advisory_length": {
+      "passed": 19,
+      "total": 19,
+      "rate": 1.0
+    },
+    "no_invented_precedent": {
+      "passed": 17,
+      "total": 17,
+      "rate": 1.0
+    },
+    "no_unreliable_estimate": {
+      "passed": 7,
+      "total": 7,
+      "rate": 1.0
+    },
+    "avoids_forbidden": {
+      "passed": 4,
+      "total": 4,
+      "rate": 1.0
+    },
+    "language": {
+      "passed": 2,
+      "total": 2,
+      "rate": 1.0
+    },
+    "addresses_situation": {
+      "passed": 2,
+      "total": 2,
+      "rate": 1.0
+    }
+  },
+  "cases": [
+    {
+      "id": "E01",
+      "category": "tier",
+      "latency_s": 15.0,
+      "tier": "Low",
+      "precedents": [
+        "la-long-beach-2021",
+        "suez-2021"
+      ],
+      "recommendations": [
+        {
+          "persona": "carrier",
+          "action": "Maintain normal schedules and consider using Jebel Ali as a buffer port for nearby congested routes.",
+          "reasoning": "With the port only 35% full and just 1 ship waiting with an average wait time of 2 hours, this is an ideal operating environment. There is no need for diversions or schedule adjustments. In fact, if you have vessels experiencing delays at other regional ports, Jebel Ali's current fluidity makes it a strong candidate for opportunistic calls or catch-up scheduling. The past episodes involving severe backlogs at other ports are not relevant here—conditions at Jebel Ali are the opposite of those crisis scenarios."
+        },
+        {
+          "persona": "trucking_company",
+          "action": "Take advantage of flexible appointment availability and consider consolidating pickups to reduce trips.",
+          "reasoning": "With such low port occupancy at 35% and minimal vessel queuing, terminal gates are unlikely to be strained. This means appointment slots should be readily available and wait times at the gate minimal. You can afford to batch pickups or schedule during off-peak windows without risk of delays cascading. There is no need for the aggressive pre-booking strategies that were necessary during the Los Angeles backlog—standard scheduling practices should work well in current conditions."
+        },
+        {
+          "persona": "terminal_operator",
+          "action": "Use this low-traffic period for equipment maintenance, staff training, and operational testing without disrupting throughput.",
+          "reasoning": "With only 1 ship waiting and the port at 35% capacity, you have significant operational slack. This is an opportunity to conduct crane maintenance, test new cargo-handling procedures, or rotate staff through training programs—activities that would be difficult during busier periods. There is no pressure to extend operating hours or prioritize berthing order, as wait times of 2 hours indicate vessels are being processed almost immediately upon arrival."
+        }
+      ],
+      "advisories": {
+        "carrier": "Current conditions at Jebel Ali are exceptionally favorable with only 35% capacity utilization and a single vessel waiting approximately 2 hours for berth assignment. Maintain your normal schedules without adjustments. If you have vessels experiencing delays at other regional ports, consider routing them through Jebel Ali for opportunistic calls or schedule recovery—the port's current fluidity makes it well-suited to absorb additional traffic.",
+        "trucking_company": "Current conditions at Jebel Ali are highly favorable for your operations, with port occupancy at just 35% and minimal vessel queuing translating to readily available appointment slots and short gate wait times. Consider consolidating multiple pickups into single trips to reduce fuel costs and driver hours, as there's no congestion pressure forcing you into tight scheduling windows. Standard booking practices will work fine here—no need for aggressive pre-booking strategies, and you can safely schedule during off-peak periods without risking cascade delays.",
+        "terminal_operator": "With only 1 vessel waiting and the port operating at 35% capacity, now is the ideal window to schedule crane maintenance, run operational drills, or cycle staff through training programs. Current wait times of just 2 hours confirm vessels are being processed almost immediately, so these activities won't create downstream delays. Prioritize any deferred equipment servicing that would be disruptive during peak periods."
+      },
+      "ai_status": "ok",
+      "usage": {
+        "model": "claude-opus-4-5",
+        "claude_calls": 4,
+        "input_tokens": 1375,
+        "output_tokens": 739,
+        "cost_usd": 0.02535,
+        "latency_s": 14.98
+      },
+      "checks": {
+        "pipeline_ok": true,
+        "tier": true,
+        "all_personas": true,
+        "cites_data": true,
+        "plain_language": true,
+        "advisory_length": true,
+        "no_invented_precedent": true
+      }
+    },
+    {
+      "id": "E02",
+      "category": "tier",
+      "latency_s": 16.8,
+      "tier": "Medium",
+      "precedents": [
+        "rotterdam-2022",
+        "suez-2021"
+      ],
+      "recommendations": [
+        {
+          "persona": "carrier",
+          "action": "Proactively communicate updated arrival estimates to customers now, before delays compound, and consider minor schedule adjustments if flexibility exists.",
+          "reasoning": "With 5 ships currently waiting and an average wait time of 8 hours, delays are building but still manageable. During a past high-congestion episode at Suez Canal transit ports, carriers that gave customers early revised arrival times saw fewer missed inland connections. Acting now while the port is at 60% capacity—before conditions worsen—gives your customers time to adjust their landside logistics. This is not yet a crisis, but early communication prevents small delays from cascading into larger supply chain disruptions."
+        },
+        {
+          "persona": "trucking_company",
+          "action": "Prepare for potentially increased demand by reviewing driver availability and scheduling pickups during off-peak terminal hours where possible.",
+          "reasoning": "The port is 60% full with delays starting to emerge, which typically means container dwell times may extend slightly. During a similar medium-congestion situation at Rotterdam in 2022, trucking companies that stepped in to handle more of the inland transport helped ease the overall bottleneck. While Jebel Ali's situation is different, the 8-hour average wait suggests some containers may face pickup timing shifts. Positioning capacity now and targeting less congested terminal windows can help you serve customers more reliably if conditions tighten."
+        },
+        {
+          "persona": "terminal_operator",
+          "action": "Monitor yard utilization closely and identify options for temporary overflow capacity or accelerated container movement off-site if the queue grows beyond current levels.",
+          "reasoning": "At 60% full with 5 ships waiting, the port has buffer room, but the upward trend in delays warrants attention. The Rotterdam 2022 experience showed that expanding temporary yard capacity helped manage a moderate container buildup before it became critical. You are not at that point yet, but if vessel arrivals cluster or wait times extend past 8 hours, having a contingency plan for overflow storage or faster landside clearance will prevent yard congestion from becoming the new bottleneck."
+        }
+      ],
+      "advisories": {
+        "carrier": "Current conditions at Jebel Ali show 5 vessels waiting with an average 8-hour delay, and the port is operating at 60% capacity—manageable now but trending toward congestion. Issue revised ETAs to your customers immediately so they can adjust inland transport and warehouse scheduling before delays compound. If your schedule allows flexibility, consider minor timing adjustments to avoid the queue building further. Early communication now will help your customers avoid the missed connections and cascading disruptions that typically follow when shippers wait until delays become critical.",
+        "trucking_company": "Current data shows Jebel Ali at 60% capacity with 8-hour average container wait times, indicating delays are beginning to emerge. Review your driver availability now and coordinate with terminal operators to schedule pickups during off-peak hours when gate congestion is lighter. This proactive positioning will help you maintain reliable service for customers if dwell times extend further, and historical patterns from similar medium-congestion situations suggest early capacity planning pays off when conditions tighten.",
+        "terminal_operator": "Current yard utilization sits at 60% with 5 vessels in queue, giving you buffer room, but the upward trend in delays signals this could tighten quickly. Begin identifying overflow storage options now and coordinate with trucking partners on accelerated pickup schedules. If wait times push past 8 hours or vessel arrivals cluster, you'll want contingency capacity ready rather than scrambling—Rotterdam's 2022 experience showed that pre-arranged temporary yard space prevented moderate buildups from becoming critical bottlenecks."
+      },
+      "ai_status": "ok",
+      "usage": {
+        "model": "claude-opus-4-5",
+        "claude_calls": 4,
+        "input_tokens": 1408,
+        "output_tokens": 821,
+        "cost_usd": 0.02756,
+        "latency_s": 16.84
+      },
+      "checks": {
+        "pipeline_ok": true,
+        "tier": true,
+        "all_personas": true,
+        "cites_data": true,
+        "plain_language": true,
+        "advisory_length": true,
+        "no_invented_precedent": true
+      }
+    },
+    {
+      "id": "E03",
+      "category": "tier",
+      "latency_s": 17.2,
+      "tier": "High",
+      "precedents": [
+        "la-long-beach-2021",
+        "suez-2021"
+      ],
+      "recommendations": [
+        {
+          "persona": "carrier",
+          "action": "Proactively communicate revised arrival estimates to customers now and consider whether any vessels can be rerouted to nearby alternative ports such as Khalifa Port or Hamad Port if schedules allow.",
+          "reasoning": "With 12 ships currently waiting and an average wait time of 18 hours, vessels arriving at Jebel Ali face meaningful delays before reaching a berth. During the 2021 Suez Canal disruption, carriers that provided customers with early arrival revisions helped reduce missed inland connections and supply chain disruptions. Given that the port is operating at 80% capacity, the queue is unlikely to clear quickly. Communicating delays now gives your customers time to adjust their logistics plans, and exploring diversion options—while disruptive—may prove faster than joining an 18-hour queue that could lengthen if more ships arrive."
+        },
+        {
+          "persona": "trucking_company",
+          "action": "Secure terminal appointment slots in advance rather than relying on same-day or drop-in pickups, and consider shifting some pickups to off-peak hours if the terminal offers extended gate hours.",
+          "reasoning": "When a port is 80% full with 12 ships waiting, container discharge will be uneven—once those waiting vessels berth, a surge of containers will hit the yard. During the 2021 Los Angeles congestion, trucking companies that pre-booked appointment slots cleared containers significantly faster than those depending on drop-in access. Locking in appointments now ensures you have guaranteed access windows, reduces driver wait times at the gate, and helps you plan routes more reliably. If Jebel Ali extends operations or offers night gates, those slots often have shorter queues."
+        },
+        {
+          "persona": "terminal_operator",
+          "action": "Review berthing priorities to consider original scheduled arrival times alongside actual arrival order, and assess whether extending operating hours or adding gate shifts would help clear the 12-ship backlog more quickly.",
+          "reasoning": "At 80% capacity with 12 vessels waiting an average of 18 hours, the terminal is under significant strain. During the Suez Canal aftermath, terminals that prioritized berthing by original scheduled arrival—rather than strict first-come-first-served—reduced disputes with carriers whose vessels were delayed through no fault of their own. Additionally, the Los Angeles experience showed that moving to around-the-clock operations helped terminals work through backlogs faster. Extending crane and gate hours, even temporarily, could shorten the queue and prevent the situation from escalating further."
+        }
+      ],
+      "advisories": {
+        "carrier": "With 12 vessels currently waiting at Jebel Ali and average wait times of 18 hours, your ships arriving today will face meaningful delays before berthing. Issue revised arrival estimates to your customers immediately so they can adjust inland transport and warehouse scheduling accordingly. Given the port is operating at 80% capacity, also evaluate whether any flexible sailings could divert to Khalifa Port or Hamad Port, as this may prove faster than joining a queue that could lengthen further.",
+        "trucking_company": "With Jebel Ali currently at 80% capacity and 12 vessels waiting to berth, expect a significant surge of containers hitting the yard once those ships begin discharging—book your terminal appointment slots now rather than relying on same-day access. Pre-secured appointments will guarantee your drivers access windows and cut gate wait times considerably when congestion peaks. If the terminal is offering extended or night gate hours, prioritize those slots as they typically have shorter queues and faster turnaround.",
+        "terminal_operator": "With 12 vessels currently waiting an average of 18 hours at 80% capacity, consider prioritizing berthing assignments by original scheduled arrival times rather than strict arrival order to reduce disputes with carriers whose delays stemmed from upstream disruptions. Temporarily extending crane and gate operations toward around-the-clock shifts could accelerate queue clearance—terminals that adopted this approach during post-Suez backlogs saw faster recovery. Assess staffing feasibility for additional shifts now before the backlog compounds further."
+      },
+      "ai_status": "ok",
+      "usage": {
+        "model": "claude-opus-4-5",
+        "claude_calls": 4,
+        "input_tokens": 1518,
+        "output_tokens": 913,
+        "cost_usd": 0.03042,
+        "latency_s": 17.22
+      },
+      "checks": {
+        "pipeline_ok": true,
+        "tier": true,
+        "all_personas": true,
+        "cites_data": true,
+        "plain_language": true,
+        "advisory_length": true,
+        "no_invented_precedent": true
+      }
+    },
+    {
+      "id": "E04",
+      "category": "tier",
+      "latency_s": 15.4,
+      "tier": "Critical",
+      "precedents": [
+        "la-long-beach-2021",
+        "yantian-2021"
+      ],
+      "recommendations": [
+        {
+          "persona": "carrier",
+          "action": "Consider diverting vessels to nearby alternative ports such as Khalifa Port or Hamad Port in Qatar, and communicate proactively with customers about potential schedule changes.",
+          "reasoning": "With 22 ships currently waiting and an average wait time of 30 hours, vessels arriving at Jebel Ali now face significant delays before berthing. The port being 95% full means there is almost no buffer capacity to absorb the backlog quickly. During a similar critical congestion event at Yantian in 2021, carriers that rebooked early to alternate terminals avoided the worst of the multi-week delays. Given the current severity at Jebel Ali, early diversion decisions could prevent your vessels from joining a queue that may grow longer before it improves."
+        },
+        {
+          "persona": "trucking_company",
+          "action": "Pre-book terminal appointment slots immediately rather than relying on drop-in pickups, and consider staging trucks at nearby holding areas to reduce turnaround time once slots open.",
+          "reasoning": "When a port is 95% full with 22 ships waiting, terminal yards become extremely congested, which typically spills over into longer truck processing times and limited flexibility for unscheduled pickups. During the Los Angeles congestion in late 2021, trucking companies that secured appointment slots in advance cleared containers notably faster than those attempting drop-in pickups. At Jebel Ali right now, planning ahead and securing confirmed slots will help you move cargo more reliably and avoid having trucks idle for extended periods."
+        },
+        {
+          "persona": "terminal_operator",
+          "action": "Extend gate hours or move toward around-the-clock operations if not already in place, and prioritize clearing the oldest containers from the yard to free up space.",
+          "reasoning": "The port is operating at 95% capacity with 22 vessels queued and an average 30-hour wait, which indicates the current throughput rate is not keeping pace with arrivals. Expanding operating hours proved effective during the Los Angeles critical congestion period, when terminals that shifted to 24/7 operations helped reduce the vessel backlog over time. Prioritizing removal of containers that have been sitting longest will free yard space more quickly, allowing incoming cargo to flow through and gradually reducing the ship waiting queue."
+        }
+      ],
+      "advisories": {
+        "carrier": "With 22 vessels currently waiting and average delays of 30 hours at Jebel Ali, combined with 95% capacity utilization, your ships risk joining a queue that may worsen before clearing. Khalifa Port and Hamad Port in Qatar offer viable alternatives to avoid compounding delays. Issue proactive schedule advisories to your customers now, as carriers who rebooked early during the 2021 Yantian congestion avoided the worst multi-week disruptions. Early diversion decisions made today could save significant vessel time versus waiting for conditions to improve.",
+        "trucking_company": "With Jebel Ali currently at 95% capacity and 22 vessels waiting at anchor, terminal yards are heavily congested and drop-in pickup availability will be extremely limited. Secure your terminal appointment slots now rather than relying on day-of availability—during similar congestion events, pre-booked appointments have cleared containers significantly faster than unscheduled attempts. Stage your trucks at nearby holding areas so drivers can move quickly once slots open, minimizing idle time and fuel costs.",
+        "terminal_operator": "With 22 vessels currently waiting an average of 30 hours and yard capacity at 95%, your throughput is falling behind the arrival rate. Extending gate operations to 24/7 proved effective during the Los Angeles congestion crisis, where terminals that made this shift saw measurable reductions in vessel backlogs. Focus yard crews on clearing the oldest dwelling containers first to free space fastest and restore flow for incoming cargo."
+      },
+      "ai_status": "ok",
+      "usage": {
+        "model": "claude-opus-4-5",
+        "claude_calls": 4,
+        "input_tokens": 1464,
+        "output_tokens": 860,
+        "cost_usd": 0.02882,
+        "latency_s": 15.41
+      },
+      "checks": {
+        "pipeline_ok": true,
+        "tier": true,
+        "all_personas": true,
+        "cites_data": true,
+        "plain_language": true,
+        "advisory_length": true,
+        "no_invented_precedent": true
+      }
+    },
+    {
+      "id": "E05",
+      "category": "boundary",
+      "latency_s": 17.8,
+      "tier": "High",
+      "precedents": [
+        "la-long-beach-2021",
+        "suez-2021"
+      ],
+      "recommendations": [
+        {
+          "persona": "carrier",
+          "action": "Proactively communicate revised arrival estimates to customers and consider whether any flexibility exists in your vessel schedule to avoid peak queue times at Antwerp.",
+          "reasoning": "With 8 ships currently waiting and an average wait time of 2 hours, delays are real but not yet severe. However, the high congestion tier signals that conditions could deteriorate. During a comparable backlog following the Suez Canal disruption, carriers that gave customers early arrival revisions saw fewer missed inland connections. Given that the port is only 30% full in terms of berth capacity, the bottleneck appears to be in the queue rather than at the berths themselves—suggesting that once your vessel clears the wait, berthing should proceed normally. Early communication now protects your customers' logistics plans without requiring costly diversions."
+        },
+        {
+          "persona": "trucking_company",
+          "action": "Pre-book terminal appointment slots rather than relying on drop-in pickups, and coordinate with your shipper clients to confirm container availability before dispatching trucks.",
+          "reasoning": "The 8-ship queue means a pulse of containers will hit the terminal once those vessels berth. Since the port is currently only 30% full, there is capacity to absorb this—but the timing will be uneven. During the Los Angeles backlog, trucking companies that pre-booked appointment slots cleared containers faster than those relying on walk-in pickups. Locking in appointments now lets you plan driver schedules efficiently and avoid wasted trips if containers are delayed by the 2-hour average ship wait time."
+        },
+        {
+          "persona": "terminal_operator",
+          "action": "Consider prioritizing berthing assignments based on original scheduled arrival times rather than strict arrival order, and review staffing levels to handle the incoming wave of cargo once the 8 waiting ships begin to berth.",
+          "reasoning": "At 30% berth occupancy, you have physical capacity available, yet 8 ships are waiting—indicating the constraint is likely in scheduling, pilotage, or other sequencing factors. When the Suez backlog created similar queuing issues, terminals that berthed vessels by original scheduled arrival rather than who showed up first reduced disputes and kept cargo flows more predictable. With a 2-hour average wait, delays are manageable now, but preparing staffing and equipment for the surge when those vessels berth will prevent the situation from escalating."
+        }
+      ],
+      "advisories": {
+        "carrier": "With 8 vessels currently in queue and average wait times around 2 hours at Antwerp, you should send revised arrival estimates to your customers now before conditions potentially worsen. The bottleneck appears to be in the queue rather than berth availability, as capacity sits at only 30%—meaning once you clear the wait, berthing should proceed normally. If your schedule allows any flexibility, consider timing your arrival to avoid peak queue periods. Early communication now will help your customers adjust inland connections without requiring costly route diversions on your end.",
+        "trucking_company": "With 8 ships currently queued and only a 2-hour average wait time, a wave of containers will soon hit the terminal that's currently at 30% capacity. Pre-booking terminal appointment slots now will help you avoid the congestion spikes that occur when multiple vessels berth in quick succession. Confirm container availability with your shipper clients before dispatching to prevent wasted trips if unloading is delayed. During similar queue buildups at other ports, companies using pre-booked slots cleared cargo significantly faster than those relying on drop-in pickups.",
+        "terminal_operator": "With 8 ships currently waiting despite only 30% berth occupancy, the bottleneck appears to be in scheduling or pilotage sequencing rather than physical capacity. Prioritizing berths by original scheduled arrival times—similar to approaches that reduced disputes during the Suez backlog—will help maintain predictable cargo flows and minimize shipper complaints. The current 2-hour average wait is manageable, but you should begin adjusting crane operator and stevedore shifts now to handle the surge once these vessels begin berthing simultaneously."
+      },
+      "ai_status": "ok",
+      "usage": {
+        "model": "claude-opus-4-5",
+        "claude_calls": 4,
+        "input_tokens": 1461,
+        "output_tokens": 916,
+        "cost_usd": 0.0302,
+        "latency_s": 17.78
+      },
+      "checks": {
+        "pipeline_ok": true,
+        "tier": true,
+        "all_personas": true,
+        "cites_data": true,
+        "plain_language": true,
+        "advisory_length": true,
+        "no_invented_precedent": true
+      }
+    },
+    {
+      "id": "E06",
+      "category": "boundary",
+      "latency_s": 16.0,
+      "tier": "Critical",
+      "precedents": [
+        "la-long-beach-2021",
+        "suez-2021"
+      ],
+      "recommendations": [
+        {
+          "persona": "carrier",
+          "action": "Proactively communicate revised arrival estimates to customers and consider minor schedule adjustments rather than immediate diversions.",
+          "reasoning": "Although the port is labeled as severely congested due to ships waiting an average of 24 hours, there is currently only 1 ship waiting and the port is just 30% full in terms of capacity. This suggests the delay may be caused by a specific operational bottleneck rather than systemic overcrowding. Before diverting vessels to alternative ports, it would be wise to investigate the root cause of the 24-hour wait. In the meantime, providing customers with early and transparent updates on expected delays will help them adjust inland logistics — during a similar situation at Suez-connected ports, carriers that gave customers early revised arrival times saw fewer missed connections downstream."
+        },
+        {
+          "persona": "trucking_company",
+          "action": "Confirm appointment slots in advance and prepare contingency scheduling, but avoid canceling existing bookings prematurely.",
+          "reasoning": "With only 1 ship waiting and the port operating at just 30% capacity, the current 24-hour average wait time likely reflects a temporary disruption rather than a sustained backlog. Trucking companies should secure confirmed pickup appointments to avoid delays once that ship is processed, as pre-booked slots typically clear containers faster than drop-in attempts — a lesson from the 2021 Los Angeles congestion. However, given the low vessel queue, there is no immediate need to reroute drivers or assume extended multi-day delays."
+        },
+        {
+          "persona": "terminal_operator",
+          "action": "Investigate the specific cause of the 24-hour wait and address any localized bottleneck before scaling up operations.",
+          "reasoning": "The critical congestion rating seems driven almost entirely by the 24-hour average wait time, yet the port is only 30% full with just 1 ship waiting. This mismatch suggests an isolated problem — perhaps equipment downtime, a labor shortage on specific shifts, or a berth allocation issue — rather than overwhelming demand. Scaling to extended or 24/7 operations, which helped during the Los Angeles surge, would likely be premature here. Instead, diagnosing and fixing the root cause will resolve delays more efficiently and avoid unnecessary operational costs."
+        }
+      ],
+      "advisories": {
+        "carrier": "Current data shows only 1 vessel waiting at Antwerp with 30% capacity utilisation, yet average wait times have reached 24 hours — this points to a specific operational bottleneck rather than widespread congestion. Reach out to your customers now with revised ETAs that factor in potential 24-hour delays so they can adjust their inland transport and warehouse bookings accordingly. Hold off on rerouting vessels to alternative ports until you've confirmed the nature of the bottleneck with port operations, as the underlying capacity appears sufficient to clear the queue once the issue resolves.",
+        "trucking_company": "Secure confirmed pickup appointments now for containers aboard the single waiting vessel, as pre-booked slots typically clear cargo faster than walk-in attempts once processing resumes. The 24-hour average wait appears to stem from a temporary disruption rather than systemic congestion, given the port is operating at only 30% capacity. Maintain your current bookings and driver schedules—there's no need to reroute or assume multi-day delays with just one vessel in queue.",
+        "terminal_operator": "The 24-hour average wait time appears disproportionate given only 1 ship waiting and 30% berth utilization, pointing to a localized bottleneck rather than capacity overload. Review recent shift logs and equipment status to identify whether crane downtime, labor gaps, or berth scheduling conflicts caused the delay. Addressing this specific issue will clear the backlog more efficiently than extending operating hours, which the current demand level does not justify."
+      },
+      "ai_status": "ok",
+      "usage": {
+        "model": "claude-opus-4-5",
+        "claude_calls": 4,
+        "input_tokens": 1441,
+        "output_tokens": 859,
+        "cost_usd": 0.02868,
+        "latency_s": 16.04
+      },
+      "checks": {
+        "pipeline_ok": true,
+        "tier": true,
+        "all_personas": true,
+        "cites_data": true,
+        "plain_language": true,
+        "advisory_length": true,
+        "no_invented_precedent": true
+      }
+    },
+    {
+      "id": "E07",
+      "category": "boundary",
+      "latency_s": 19.2,
+      "tier": "Critical",
+      "precedents": [
+        "shanghai-2022",
+        "yantian-2021"
+      ],
+      "recommendations": [
+        {
+          "persona": "carrier",
+          "action": "Monitor the situation closely before committing to schedule changes, but prepare contingency routing to nearby alternatives like Barcelona or Algeciras if conditions worsen.",
+          "reasoning": "While Valencia is currently rated as critically congested with the port at 85% capacity, the actual operational indicators are relatively mild — only 1 ship is waiting and the average wait time is just 2 hours. This suggests the 'critical' rating may be driven primarily by high berth utilization rather than an active queue buildup. Unlike the Yantian episode where vessels faced multi-week delays due to a shutdown, Valencia appears to be functioning but running near capacity. The prudent approach is to maintain your current schedule while having alternative port options ready. If the waiting queue grows significantly or wait times climb beyond 6-8 hours, rebooking early to alternate terminals — as carriers did successfully during Yantian — could help avoid cascading delays."
+        },
+        {
+          "persona": "trucking_company",
+          "action": "Schedule pickups and deliveries during off-peak hours and maintain close communication with terminal contacts to confirm gate availability before dispatching trucks.",
+          "reasoning": "The port operating at 85% capacity means berths are heavily utilized, which often correlates with yard congestion and potential gate delays even when ship wait times are short. With only 2 hours of average vessel wait time currently, the landside operations may still be manageable, but high utilization can quickly translate to longer truck turn times and appointment bottlenecks. During the Shanghai lockdown, trucking companies that proactively secured operational flexibility kept cargo moving while others stalled. While Valencia isn't facing labor restrictions, the same principle applies: being proactive about timing and maintaining real-time terminal communication will help you avoid getting caught in sudden congestion spikes."
+        },
+        {
+          "persona": "terminal_operator",
+          "action": "Prioritize accelerating vessel turnaround times and consider temporarily extending operating hours to create buffer capacity before the situation deteriorates further.",
+          "reasoning": "Running at 85% capacity leaves very little margin for error — any unexpected surge in arrivals, equipment breakdown, or labor shortage could quickly push the terminal from strained to gridlocked. The fact that only 1 ship is waiting with a 2-hour average wait suggests you're currently keeping pace, but this balance is fragile at such high utilization. Extending gate hours or adding a shift could help clear yard inventory faster and bring utilization down to a more sustainable 70-75% range. This proactive approach is preferable to the reactive measures seen at Yantian, where throughput cuts forced vessels to divert entirely — maintaining throughput now prevents that scenario."
+        }
+      ],
+      "advisories": {
+        "carrier": "Current data shows Valencia at 85% capacity but with only 1 vessel waiting and 2-hour average wait times, indicating the port is functioning despite the high utilization rate. Hold your scheduled calls for now, but identify backup berth slots at Barcelona or Algeciras that could be activated within 24-48 hours. If you observe the waiting queue exceed 3-4 vessels or wait times climb past 6-8 hours, initiate rebooking to your contingency port to avoid the cascading delays seen during past congestion events.",
+        "trucking_company": "Valencia is currently operating at 85% capacity, which often leads to yard congestion and longer truck turn times even when vessel wait times appear manageable at 2 hours. Dispatch trucks during early morning or late afternoon windows when gate queues typically ease, and confirm slot availability with your terminal contacts before sending drivers. This proactive approach mirrors strategies that kept cargo moving during past disruptions and will help you avoid sudden congestion spikes that high-utilization ports can experience.",
+        "terminal_operator": "Current 85% capacity utilization with only 2-hour average wait times shows you're managing well, but this leaves minimal buffer for disruptions like equipment issues or arrival surges. Consider extending gate hours or adding an overnight shift to accelerate yard clearance and bring utilization closer to the 70-75% range. Acting now prevents the reactive throughput cuts that forced vessel diversions at other major terminals this year."
+      },
+      "ai_status": "ok",
+      "usage": {
+        "model": "claude-opus-4-5",
+        "claude_calls": 4,
+        "input_tokens": 1501,
+        "output_tokens": 933,
+        "cost_usd": 0.03083,
+        "latency_s": 19.18
+      },
+      "checks": {
+        "pipeline_ok": true,
+        "tier": true,
+        "all_personas": true,
+        "cites_data": true,
+        "plain_language": true,
+        "advisory_length": true,
+        "no_invented_precedent": true
+      }
+    },
+    {
+      "id": "E08",
+      "category": "boundary",
+      "latency_s": 16.3,
+      "tier": "High",
+      "precedents": [
+        "suez-2021",
+        "yantian-2021"
+      ],
+      "recommendations": [
+        {
+          "persona": "carrier",
+          "action": "Issue proactive ETA revisions to customers immediately and consider diverting selected vessels to nearby alternatives such as Barcelona or Algeciras if schedule flexibility allows.",
+          "reasoning": "With ships waiting an average of nearly 24 hours and the port running at 85% capacity, delays are already substantial and likely to grow. During the Suez Canal disruption in 2021, carriers that gave customers early ETA revisions experienced fewer missed inland connections. Providing revised arrival windows now helps shippers adjust warehouse bookings and trucking pickups, reducing cascading costs. For vessels not yet committed to Valencia, rerouting to a less congested port may save a full day of waiting time and preserve schedule integrity."
+        },
+        {
+          "persona": "trucking_company",
+          "action": "Shift pickup appointments to off-peak windows and pre-position drivers near the terminal to capitalize on any short-notice berth openings.",
+          "reasoning": "A 24-hour average wait means container availability is unpredictable; trucks arriving at standard midday slots risk long dwell times or being turned away. With 7 ships queued and the port 85% full, gate congestion will spike each time a vessel finally discharges. By booking early-morning or late-evening appointments and staging drivers close by, you can collect containers as soon as they clear customs, avoiding the bottleneck periods and keeping equipment utilization high."
+        },
+        {
+          "persona": "terminal_operator",
+          "action": "Adopt an ETA-based berthing priority and extend operating hours or add casual labor shifts to work down the backlog faster.",
+          "reasoning": "Seven vessels are already waiting and berth space is at 85%, so the queue will lengthen unless throughput increases. During the March 2021 Suez-related congestion, terminals that prioritized berthing by original scheduled arrival rather than physical arrival order reduced disputes and kept vessel turnaround more predictable. Adding night or weekend shifts—even temporarily—can free berths sooner, shortening the 24-hour average wait and preventing further buildup that could push the port into critical congestion."
+        }
+      ],
+      "advisories": {
+        "carrier": "Current vessel wait times at Valencia are averaging nearly 24 hours with the port operating at 85% capacity, making further delays likely. Contact your customers now with revised ETA windows to help them adjust warehouse slots and trucking schedules before disruptions cascade. For vessels not yet committed to Valencia, evaluate diverting to Barcelona or Algeciras, where you may recover a full day of waiting time and protect downstream schedule integrity.",
+        "trucking_company": "Current conditions at Valencia show 7 vessels in queue with an average 24-hour wait time and terminal capacity at 85%, which means container release timing will be highly erratic and gate congestion will surge unpredictably when vessels finally discharge. Book your pickup appointments for early-morning or late-evening slots rather than standard midday windows to avoid peak congestion periods. Pre-position drivers near the terminal so they can respond quickly when containers clear customs, maximizing equipment utilization instead of having trucks idle in queue or turned away during bottleneck periods.",
+        "terminal_operator": "Consider switching to ETA-based berthing priority rather than physical arrival order to reduce scheduling disputes and keep turnaround times predictable—this approach proved effective during the March 2021 Suez congestion event. With seven vessels currently waiting and berth utilization at 85%, adding night or weekend shifts temporarily would help free berths faster and prevent the 24-hour average wait time from climbing further. Acting now can avoid tipping into critical congestion levels that would compound delays across all operations."
+      },
+      "ai_status": "ok",
+      "usage": {
+        "model": "claude-opus-4-5",
+        "claude_calls": 4,
+        "input_tokens": 1400,
+        "output_tokens": 824,
+        "cost_usd": 0.0276,
+        "latency_s": 16.32
+      },
+      "checks": {
+        "pipeline_ok": true,
+        "tier": true,
+        "all_personas": true,
+        "cites_data": true,
+        "plain_language": true,
+        "advisory_length": true,
+        "no_invented_precedent": true
+      }
+    },
+    {
+      "id": "E09",
+      "category": "tier",
+      "latency_s": 17.6,
+      "tier": "Critical",
+      "precedents": [
+        "la-long-beach-2021",
+        "suez-2021"
+      ],
+      "recommendations": [
+        {
+          "persona": "carrier",
+          "action": "Consider diverting vessels to nearby alternative ports such as Antwerp or Rotterdam, and proactively communicate revised arrival estimates to customers immediately.",
+          "reasoning": "With ships currently waiting an average of 30 hours at Le Havre, any vessel arriving now faces significant delays that will cascade through your schedule. Although only 2 ships are waiting and the port is just 40% full, the lengthy wait times suggest operational bottlenecks that capacity alone cannot explain — possibly labor constraints, equipment issues, or procedural slowdowns at the berths. During a similar critical situation at other ports, carriers that gave customers early arrival revisions saw fewer missed inland connections. Diverting to alternative Northern European ports may avoid the worst delays, and transparent communication now will help your customers adjust their supply chain plans before problems compound."
+        },
+        {
+          "persona": "trucking_company",
+          "action": "Pre-book terminal appointment slots rather than relying on walk-in pickups, and coordinate closely with your shipping customers to align pickup timing with actual vessel discharge schedules.",
+          "reasoning": "The 30-hour average wait for ships means container unloading schedules are unpredictable and likely bunched together when berths finally clear. This creates surges in cargo availability that can overwhelm terminal gates if truckers arrive without appointments. During the severe congestion at Los Angeles, trucking companies that pre-booked appointment slots cleared containers faster than those depending on drop-in pickups. Given the current critical status at Le Havre, securing scheduled slots will help you avoid long gate queues and make more efficient use of driver hours during what could be an erratic discharge pattern."
+        },
+        {
+          "persona": "terminal_operator",
+          "action": "Investigate and address the root cause of the 30-hour wait times, and consider extending operating hours or adjusting berth allocation priorities to clear the backlog more efficiently.",
+          "reasoning": "The mismatch between low utilization — the port is only 40% full with just 2 ships waiting — and the critical 30-hour average wait suggests the bottleneck is not capacity but throughput or scheduling inefficiencies. Something is preventing available berths from being used productively. Identifying whether this stems from equipment downtime, labor availability, or procedural delays is urgent. During past critical episodes at other major ports, moving to extended or round-the-clock operations helped clear backlogs faster. Additionally, prioritizing berth assignments by original scheduled arrival rather than physical queue order — as was done during the Suez Canal disruption — can reduce disputes and restore predictable operations more quickly."
+        }
+      ],
+      "advisories": {
+        "carrier": "Current average wait time at Le Havre has reached 30 hours despite only 40% port utilization, indicating operational bottlenecks that won't resolve quickly. Diverting inbound vessels to Antwerp or Rotterdam could significantly reduce your schedule disruptions. Contact your customers immediately with revised ETAs — early communication helps them adjust inland logistics before delays compound through the supply chain.",
+        "trucking_company": "With vessels currently waiting an average of 30 hours for berth access at Le Havre, container discharge schedules are highly unpredictable and will likely occur in concentrated surges once berths clear. Secure terminal appointment slots in advance rather than relying on walk-in pickups—experience from the Los Angeles congestion showed that truckers with pre-booked slots cleared containers significantly faster than drop-in arrivals. Coordinate directly with your shipping customers to align pickup timing with actual vessel discharge notifications, which will help you avoid extended gate queues and maximize driver productivity during this critical congestion period.",
+        "terminal_operator": "With only 40% berth utilization yet 30-hour average wait times, your throughput process has a critical bottleneck unrelated to physical capacity—investigate whether equipment downtime, labor gaps, or procedural delays are preventing the 2 waiting vessels from accessing available berths. Consider extending to round-the-clock operations to clear the backlog, as this approach proved effective during past critical episodes at major ports. Prioritizing berth assignments by original scheduled arrival time rather than physical queue order can reduce disputes and restore predictability faster."
+      },
+      "ai_status": "ok",
+      "usage": {
+        "model": "claude-opus-4-5",
+        "claude_calls": 4,
+        "input_tokens": 1515,
+        "output_tokens": 935,
+        "cost_usd": 0.03095,
+        "latency_s": 17.58
+      },
+      "checks": {
+        "pipeline_ok": true,
+        "tier": true,
+        "all_personas": true,
+        "cites_data": true,
+        "plain_language": true,
+        "advisory_length": true,
+        "no_invented_precedent": true
+      }
+    },
+    {
+      "id": "E10",
+      "category": "port-relative",
+      "latency_s": 15.3,
+      "tier": "Medium",
+      "precedents": [
+        "rotterdam-2022",
+        "suez-2021"
+      ],
+      "recommendations": [
+        {
+          "persona": "carrier",
+          "action": "Proactively communicate revised ETAs to customers and consider minor schedule adjustments for vessels not yet committed to the Singapore approach.",
+          "reasoning": "With 22 ships currently waiting (slightly above the usual 20) and an average wait time of 6 hours, delays are building but not yet severe. During the Suez Canal disruption in 2021, carriers that provided customers with early ETA revisions experienced fewer missed inland connections. While Singapore's situation is far less acute, the same principle applies: giving shippers advance notice now—even of modest delays—helps them adjust warehouse schedules and trucking appointments before the situation potentially worsens."
+        },
+        {
+          "persona": "trucking_company",
+          "action": "Increase scheduling flexibility by pre-positioning drivers and extending pickup windows to accommodate container release delays of several hours.",
+          "reasoning": "The 6-hour average wait time means containers are arriving at terminals later than planned, which can cascade into missed trucking appointments and detention charges. During Rotterdam's 2022 congestion episode, trucking companies that absorbed more of the inland transport burden helped relieve pressure on the system. At Singapore, with ships waiting slightly above normal levels, building in extra buffer time for pickups now will prevent costly failed appointments and keep cargo moving even if waits extend further."
+        },
+        {
+          "persona": "terminal_operator",
+          "action": "Review berthing prioritization protocols and consider expanding temporary yard staging areas if wait times continue to rise.",
+          "reasoning": "The current queue of 22 ships is only modestly above the typical 20, but the 6-hour average wait suggests throughput is beginning to strain. In Rotterdam's 2022 situation, expanding temporary container yard capacity helped manage the buildup. At Singapore, preparing contingency yard space now provides a buffer if conditions deteriorate. Additionally, having a clear, transparent berthing prioritization system—as was helpful during the 2021 Suez disruption—can reduce disputes if the queue grows and wait times lengthen further."
+        }
+      ],
+      "advisories": {
+        "carrier": "Current anchorage congestion shows 22 vessels waiting with 6-hour average delays—modest but trending above the normal 20-ship baseline. Issue revised ETAs to your customers now, even for delays under 12 hours, so they can adjust warehouse slots and trucking before the window tightens. For vessels still 48+ hours out, evaluate whether a minor speed reduction could align arrival with a less congested window, potentially saving fuel while avoiding extended anchorage time.",
+        "trucking_company": "Container release delays are currently averaging around 6 hours at Singapore terminals, which means your scheduled pickup appointments are at significant risk of failing and incurring detention charges. Pre-position drivers near key terminals and extend your pickup windows by at least 6-8 hours to absorb these delays without costly rebookings. Building this buffer now is especially important since vessel waiting levels remain slightly elevated, suggesting conditions could tighten further before improving.",
+        "terminal_operator": "With 22 vessels currently queuing and average wait times at 6 hours, throughput is showing early signs of strain that warrant proactive measures. Consider identifying available yard space that could serve as temporary staging capacity, similar to Rotterdam's 2022 approach that successfully managed container buildup during congestion periods. Reviewing your berthing prioritization protocols now will help ensure transparent, dispute-free scheduling if the queue grows beyond current levels."
+      },
+      "ai_status": "ok",
+      "usage": {
+        "model": "claude-opus-4-5",
+        "claude_calls": 4,
+        "input_tokens": 1386,
+        "output_tokens": 772,
+        "cost_usd": 0.02623,
+        "latency_s": 15.34
+      },
+      "checks": {
+        "pipeline_ok": true,
+        "tier": true,
+        "all_personas": true,
+        "cites_data": true,
+        "plain_language": true,
+        "advisory_length": true,
+        "no_invented_precedent": true,
+        "no_unreliable_estimate": true,
+        "avoids_forbidden": true
+      }
+    },
+    {
+      "id": "E11",
+      "category": "port-relative",
+      "latency_s": 16.6,
+      "tier": "High",
+      "precedents": [
+        "la-long-beach-2021",
+        "suez-2021"
+      ],
+      "recommendations": [
+        {
+          "persona": "carrier",
+          "action": "Proactively communicate revised arrival estimates to customers now and consider whether any vessels can be rerouted to nearby alternative ports in the region.",
+          "reasoning": "With 35 ships waiting compared to the usual 20, the port is carrying about 75% more queue traffic than normal. The average wait time of 10 hours may extend if more vessels arrive before the backlog clears. During the 2021 Suez disruption, carriers that gave customers early schedule revisions saw fewer missed inland connections — the same principle applies here. If you have flexibility in your network, diverting some calls to regional alternatives could help avoid compounding delays, similar to what worked during the Los Angeles backlog when carriers shifted volume to secondary ports."
+        },
+        {
+          "persona": "trucking_company",
+          "action": "Shift to pre-booked terminal appointment slots rather than relying on drop-in pickups, and communicate realistic pickup timelines to your shippers.",
+          "reasoning": "The 35-ship queue and 10-hour average wait suggest that containers will be sitting longer before becoming available for collection. During the Los Angeles congestion in late 2021, trucking companies that pre-booked appointment slots cleared containers faster than those relying on walk-up access. Given that Singapore is currently 75% above its normal waiting queue, securing confirmed slots will help you plan driver schedules more efficiently and reduce wasted trips to gates that may be overwhelmed."
+        },
+        {
+          "persona": "terminal_operator",
+          "action": "Consider prioritizing berth allocation based on original scheduled arrival times rather than strict arrival order, and assess whether extended operating hours can accelerate vessel turnover.",
+          "reasoning": "With 35 ships waiting — nearly double the typical 20 — disputes over berthing priority may arise as delays mount. During the Suez-related congestion in 2021, terminals that berthed vessels by their original scheduled arrival time rather than actual queue position reduced fairness complaints and maintained better relationships with carriers. The 10-hour average wait is manageable for now, but if the queue grows further, expanding to extended or round-the-clock operations — as Los Angeles terminals did during their critical backlog — could help work through the excess traffic before it escalates."
+        }
+      ],
+      "advisories": {
+        "carrier": "Current queue levels at Singapore are running 75% above normal with 35 vessels waiting versus the typical 20, which means the present 10-hour average wait is likely to stretch further before conditions ease. Updating your customers now on potential schedule shifts will help them adjust inland transport and reduce missed connections—carriers who issued early revisions during the 2021 Suez disruption saw notably fewer downstream problems. If your network allows, consider diverting select calls to nearby regional ports to avoid stacking additional delays on top of the existing backlog.",
+        "trucking_company": "With 35 ships currently in queue and average wait times at 10 hours, containers will likely face extended dwell times before becoming available for pickup. Secure pre-booked terminal appointment slots now rather than relying on drop-in access—during similar congestion levels, carriers with confirmed slots cleared containers significantly faster than those using walk-up access. Communicate realistic pickup timelines to your shippers based on the current 75% above-normal queue levels, and plan driver schedules around confirmed slots to reduce wasted gate trips.",
+        "terminal_operator": "With 35 vessels currently waiting versus the typical 20, consider allocating berths based on original scheduled arrival times rather than strict queue position—this approach reduced fairness complaints and preserved carrier relationships when terminals applied it during the 2021 Suez congestion. The current 10-hour average wait is still manageable, but if the queue continues building, evaluate extending operations toward round-the-clock shifts to accelerate turnover before delays compound further."
+      },
+      "ai_status": "ok",
+      "usage": {
+        "model": "claude-opus-4-5",
+        "claude_calls": 4,
+        "input_tokens": 1454,
+        "output_tokens": 861,
+        "cost_usd": 0.0288,
+        "latency_s": 16.57
+      },
+      "checks": {
+        "pipeline_ok": true,
+        "tier": true,
+        "all_personas": true,
+        "cites_data": true,
+        "plain_language": true,
+        "advisory_length": true,
+        "no_invented_precedent": true,
+        "no_unreliable_estimate": true,
+        "avoids_forbidden": true
+      }
+    },
+    {
+      "id": "E12",
+      "category": "port-relative",
+      "latency_s": 17.2,
+      "tier": "Critical",
+      "precedents": [
+        "la-long-beach-2021",
+        "suez-2021"
+      ],
+      "recommendations": [
+        {
+          "persona": "carrier",
+          "action": "Consider diverting vessels to alternative UK or Northern European ports such as Southampton, London Gateway, or Rotterdam, and proactively communicate revised arrival estimates to customers immediately.",
+          "reasoning": "Felixstowe currently has 9 ships waiting, more than double the usual level of about 4. This indicates severe pressure on berth availability. During the late 2021 congestion at Los Angeles and Long Beach, carriers that diverted calls to secondary ports avoided the worst of the multi-week delays. Similarly, during the Suez Canal disruption, carriers that provided customers with early schedule revisions helped reduce missed inland connections. With the queue already at critical levels, vessels arriving now face unpredictable wait times that could extend well beyond the current 3-hour average as the backlog compounds. Rebooking cargo through less congested ports or providing customers with honest, updated timelines now will help preserve service reliability and customer relationships."
+        },
+        {
+          "persona": "trucking_company",
+          "action": "Shift to pre-booked terminal appointment slots rather than relying on drop-in pickups, and coordinate closely with customers to stagger collection schedules over the coming days.",
+          "reasoning": "With 9 ships waiting at Felixstowe instead of the usual 4, a surge of containers will hit the terminal once those vessels berth. During the Los Angeles and Long Beach congestion of late 2021, trucking companies that secured appointment slots in advance cleared containers significantly faster than those attempting drop-in pickups. The current 3-hour average wait time is likely to increase as the backlog clears, so locking in appointments now and spreading pickups across less busy periods will reduce driver idle time, fuel costs, and the risk of missed delivery windows."
+        },
+        {
+          "persona": "terminal_operator",
+          "action": "Evaluate extending operating hours or moving toward continuous operations, and consider prioritizing berthing based on original scheduled arrival times rather than strict arrival order to manage fairness and throughput.",
+          "reasoning": "The terminal is facing more than twice the typical vessel queue, with 9 ships waiting compared to the usual 4. At Los Angeles and Long Beach during peak congestion, terminals that adopted extended or round-the-clock operations were better able to process the backlog. Additionally, during the Suez Canal disruption, terminal operators that berthed vessels by original scheduled arrival rather than physical arrival order reduced disputes and helped carriers maintain some semblance of their planned schedules. With a critical congestion level now in effect, these measures could help prevent the backlog from growing further and restore more predictable operations sooner."
+        }
+      ],
+      "advisories": {
+        "carrier": "With 9 vessels currently queued at Felixstowe, more than double the typical 4-ship average, berthing delays are likely to extend significantly beyond the current 3-hour wait time as the backlog compounds. Evaluate diverting upcoming calls to Southampton, London Gateway, or Rotterdam where berth availability may be more favourable. Notify shippers and consignees immediately of any revised port rotations or updated arrival windows to help them adjust inland transport arrangements and avoid missed connections.",
+        "trucking_company": "Felixstowe currently has 9 vessels waiting versus the typical 4, which means a significant wave of containers will flood the terminal as these ships berth. Secure pre-booked terminal appointment slots now rather than relying on drop-in pickups—during similar congestion events, carriers with advance appointments cleared containers significantly faster. The current 3-hour average wait time is expected to climb as the backlog clears, so coordinate with your customers to stagger collections across off-peak periods to minimise driver idle time and protect your delivery commitments.",
+        "terminal_operator": "With 9 vessels currently queued against your typical baseline of 4, consider extending operating hours toward 24/7 operations to accelerate throughput—this approach proved effective at Los Angeles and Long Beach during their peak congestion periods. Additionally, switching to berthing priority based on original scheduled arrival times rather than physical arrival order can reduce carrier disputes and help maintain schedule integrity, as demonstrated during the Suez Canal disruption. These measures should help prevent further backlog growth and restore predictable operations more quickly."
+      },
+      "ai_status": "ok",
+      "usage": {
+        "model": "claude-opus-4-5",
+        "claude_calls": 4,
+        "input_tokens": 1553,
+        "output_tokens": 946,
+        "cost_usd": 0.03141,
+        "latency_s": 17.16
+      },
+      "checks": {
+        "pipeline_ok": true,
+        "tier": true,
+        "all_personas": true,
+        "cites_data": true,
+        "plain_language": true,
+        "advisory_length": true,
+        "no_invented_precedent": true,
+        "no_unreliable_estimate": true
+      }
+    },
+    {
+      "id": "E13",
+      "category": "port-relative",
+      "latency_s": 16.3,
+      "tier": "Medium",
+      "precedents": [
+        "la-long-beach-2021",
+        "suez-2021"
+      ],
+      "recommendations": [
+        {
+          "persona": "carrier",
+          "action": "Proactively communicate revised arrival estimates to customers and consider minor schedule adjustments for vessels not yet en route to Valencia.",
+          "reasoning": "With 4 ships waiting compared to the usual 1, Valencia is experiencing a noticeable queue buildup. While the current 2-hour average wait is manageable, this fourfold increase in waiting vessels suggests delays could grow if more ships arrive. During the Suez Canal disruption, carriers that gave customers early estimated arrival revisions saw fewer missed inland connections. Applying that lesson here: alerting customers now about potential 2-4 hour delays allows them to adjust truck pickups and rail bookings, reducing costly missed handoffs even if the situation doesn't worsen significantly."
+        },
+        {
+          "persona": "trucking_company",
+          "action": "Shift to pre-booked terminal appointment slots rather than relying on flexible or drop-in pickups for the next several days.",
+          "reasoning": "The queue of 4 ships waiting—four times the normal level of about 1—signals that container discharge schedules may become less predictable as the port works through the backlog. During the Los Angeles congestion in late 2021, trucking companies that pre-booked appointment slots cleared containers faster than those relying on drop-in pickups. With delays currently averaging 2 hours and likely to fluctuate, locking in appointments now reduces driver idle time and gives dispatchers more certainty for planning routes and customer commitments."
+        },
+        {
+          "persona": "terminal_operator",
+          "action": "Review berthing priorities to favour vessels by their originally scheduled arrival time rather than strictly by queue position, and prepare contingency staffing if the backlog grows.",
+          "reasoning": "A jump from the usual 1 waiting ship to 4 indicates emerging pressure on berth availability. The current 2-hour wait is still moderate, but if additional vessels arrive before the queue clears, delays could compound. During the Suez Canal disruption, terminal operators that prioritized berthing by original scheduled arrival rather than arrival order reduced fairness disputes among shipping lines. Adopting a similar transparent prioritization now—and having extra crane or gate staff on standby—positions the terminal to clear the backlog efficiently while maintaining good relationships with carriers."
+        }
+      ],
+      "advisories": {
+        "carrier": "Valencia currently has 4 vessels waiting versus the typical 1, and while the 2-hour average wait remains manageable, this queue buildup signals potential for growing delays. Consider issuing revised ETAs to your customers now, adding a 2-4 hour buffer for Valencia-bound cargo so they can adjust truck and rail bookings accordingly. For vessels not yet en route, evaluate whether minor speed adjustments could help you arrive when berth availability improves rather than joining the queue.",
+        "trucking_company": "With 4 ships currently waiting at Valencia—four times the normal level—container discharge schedules are becoming unpredictable, and the current 2-hour average delay is likely to fluctuate. Switch your drivers to pre-booked terminal appointment slots rather than drop-in pickups for the next several days. This approach proved effective during the 2021 Los Angeles congestion, where carriers with appointments cleared containers faster and reduced driver idle time. Locking in slots now will give your dispatchers better route planning certainty and help you maintain reliable customer commitments.",
+        "terminal_operator": "Consider switching berthing priority from strict queue order to original scheduled arrival time, as this approach reduced carrier disputes during the Suez disruption and the current jump from 1 to 4 waiting vessels suggests pressure is building. With wait times still at a moderate 2 hours, you have a window to get ahead of this before delays compound. Arrange contingency staffing for crane and gate operations now so you can clear the backlog quickly if additional arrivals hit before the queue normalizes."
+      },
+      "ai_status": "ok",
+      "usage": {
+        "model": "claude-opus-4-5",
+        "claude_calls": 4,
+        "input_tokens": 1463,
+        "output_tokens": 868,
+        "cost_usd": 0.02901,
+        "latency_s": 16.29
+      },
+      "checks": {
+        "pipeline_ok": true,
+        "tier": true,
+        "all_personas": true,
+        "cites_data": true,
+        "plain_language": true,
+        "advisory_length": true,
+        "no_invented_precedent": true,
+        "no_unreliable_estimate": true
+      }
+    },
+    {
+      "id": "E14",
+      "category": "port-relative",
+      "latency_s": 15.1,
+      "tier": "High",
+      "precedents": [
+        "la-long-beach-2021",
+        "suez-2021"
+      ],
+      "recommendations": [
+        {
+          "persona": "carrier",
+          "action": "Proactively notify customers of potential 5-hour or longer delays and consider revising estimated arrival times now rather than waiting for conditions to worsen.",
+          "reasoning": "With 10 ships currently waiting at New York / New Jersey, vessels are facing meaningful queue times before reaching berth. During a comparable high-congestion episode at Suez transit ports, carriers that gave customers early revised arrival estimates saw fewer missed inland connections — shippers had time to adjust warehouse appointments and trucking schedules. Given the current backlog, sending updated ETAs now helps your customers plan downstream logistics and reduces the cascade of missed handoffs."
+        },
+        {
+          "persona": "trucking_company",
+          "action": "Shift to pre-booked terminal appointment slots rather than relying on drop-in pickups, and build extra buffer time into driver schedules.",
+          "reasoning": "A 5-hour average wait time for ships translates into unpredictable container availability at the terminal, which often means longer gate queues and uncertain pickup windows for truckers. During the severe 2021 congestion at Los Angeles / Long Beach, trucking companies that secured appointment slots in advance cleared containers faster than those attempting drop-in pickups. Pre-booking your slots now and padding schedules for potential delays will help you maintain driver productivity and meet customer commitments despite the backlog."
+        },
+        {
+          "persona": "terminal_operator",
+          "action": "Consider prioritizing berth assignments based on original scheduled arrival rather than strict arrival order, and evaluate whether extended gate hours could help clear accumulated container volume.",
+          "reasoning": "With 10 ships waiting and a high congestion designation, berthing decisions carry significant downstream consequences. During the Suez disruption, terminals that berthed vessels by original scheduled arrival time rather than queue order reduced disputes and helped carriers maintain some schedule integrity. Additionally, the Los Angeles / Long Beach episode showed that moving toward extended or round-the-clock operations helped terminals work through backlogs more quickly. Reviewing whether additional gate hours are feasible could accelerate container throughput and ease landside pressure."
+        }
+      ],
+      "advisories": {
+        "carrier": "Current anchorage data shows 10 vessels waiting at New York / New Jersey, which typically translates to delays of 5 hours or more before berthing. Based on patterns from similar congestion events, customers who receive early ETA revisions experience significantly fewer missed inland connections because they can adjust warehouse slots and trucking schedules in advance. Send updated arrival estimates to your customers today rather than waiting for the queue to grow, giving them maximum lead time to coordinate downstream logistics.",
+        "trucking_company": "With ships currently waiting an average of 5 hours before berthing at New York / New Jersey, container availability at terminals is unpredictable, which directly impacts your pickup windows and gate queue times. Shift your operations to pre-booked terminal appointment slots rather than relying on drop-in pickups—during the 2021 Los Angeles / Long Beach congestion, trucking companies using advance appointments cleared containers significantly faster. Add buffer time to driver schedules to account for potential delays, helping you maintain productivity and meet delivery commitments despite the current backlog.",
+        "terminal_operator": "Switching berth assignments to honor original scheduled arrival times rather than strict queue order can reduce carrier disputes and preserve schedule integrity—a tactic that proved effective during the Suez disruption. With 10 vessels currently waiting and high congestion levels, consider evaluating whether extended or 24-hour gate operations are operationally feasible. Los Angeles and Long Beach terminals found that expanded gate hours significantly accelerated container throughput during similar backlogs, easing pressure on both the waterside queue and landside drayage operations."
+      },
+      "ai_status": "ok",
+      "usage": {
+        "model": "claude-opus-4-5",
+        "claude_calls": 4,
+        "input_tokens": 1410,
+        "output_tokens": 827,
+        "cost_usd": 0.02772,
+        "latency_s": 15.14
+      },
+      "checks": {
+        "pipeline_ok": true,
+        "tier": true,
+        "all_personas": true,
+        "cites_data": true,
+        "plain_language": true,
+        "advisory_length": true,
+        "no_invented_precedent": true,
+        "no_unreliable_estimate": true,
+        "avoids_forbidden": true
+      }
+    },
+    {
+      "id": "E15",
+      "category": "arabic",
+      "latency_s": 20.7,
+      "tier": "Critical",
+      "precedents": [
+        "la-long-beach-2021",
+        "yantian-2021"
+      ],
+      "recommendations": [
+        {
+          "persona": "carrier",
+          "action": "إعادة توجيه السفن القادمة إلى موانئ بديلة قريبة مثل ميناء خليفة أو ميناء الفجيرة، مع إخطار العملاء فوراً بتغييرات الجدول الزمني",
+          "reasoning": "مع وجود 22 سفينة في قائمة الانتظار ومتوسط انتظار يصل إلى 30 ساعة، فإن أي سفينة تصل الآن ستواجه تأخيرات كبيرة قد تمتد لأيام. خلال أزمة مماثلة في ميناء يانتيان عام 2021، نجحت شركات الشحن التي أعادت حجز رحلاتها مبكراً إلى موانئ بديلة في تجنب أسوأ التأخيرات التي استمرت لأسابيع. التحرك السريع الآن قد يوفر على عملائكم تكاليف التأخير والتخزين الإضافية"
+        },
+        {
+          "persona": "trucking_company",
+          "action": "حجز مواعيد استلام الحاويات مسبقاً عبر نظام المواعيد الإلكتروني، وتجنب الاعتماد على الزيارات العشوائية للميناء",
+          "reasoning": "عندما يكون الميناء ممتلئاً بنسبة 95%، تصبح ساحات التخزين مكتظة وتتأخر عمليات التسليم والاستلام بشكل ملحوظ. التجربة في موانئ لوس أنجلوس ولونج بيتش أثناء أزمة 2021 أظهرت أن شركات النقل التي حجزت مواعيدها مسبقاً تمكنت من إخراج حاوياتها بسرعة أكبر مقارنة بتلك التي اعتمدت على الحضور دون موعد. هذا يقلل من وقت انتظار الشاحنات ويحسن كفاءة استخدام أسطولكم"
+        },
+        {
+          "persona": "terminal_operator",
+          "action": "التحول إلى نظام العمل على مدار الساعة طوال أيام الأسبوع، مع تخصيص فرق إضافية لتسريع عمليات التفريغ والتحميل",
+          "reasoning": "مع 22 سفينة في الانتظار ونسبة إشغال تبلغ 95%، يحتاج الميناء إلى زيادة طاقته التشغيلية بشكل عاجل لتفادي تفاقم الأزمة. في أزمة لوس أنجلوس، ساهم التحول إلى العمليات المستمرة على مدار الساعة في تخفيف الضغط تدريجياً. كذلك، التواصل الاستباقي مع شركات الشحن حول أوقات الانتظار المتوقعة يساعدهم في اتخاذ قرارات أفضل ويقلل من الضغط على خدمة العملاء"
+        }
+      ],
+      "advisories": {
+        "carrier": "يُنصح بشدة بإعادة توجيه السفن المتجهة إلى ميناء جبل علي نحو ميناء خليفة أو ميناء الفجيرة، حيث تشير البيانات الحالية إلى وجود 22 سفينة في قائمة الانتظار بمتوسط انتظار يبلغ 30 ساعة. يجب إخطار العملاء فوراً بهذه التغييرات لتجنب تكاليف التأخير والتخزين الإضافية. التجربة المماثلة في ميناء يانتيان عام 2021 أثبتت أن التحرك المبكر يحمي من تأخيرات قد تمتد لأسابيع.",
+        "trucking_company": "مع بلوغ نسبة إشغال ميناء جبل علي 95%، ننصح بشدة بحجز مواعيد استلام الحاويات مسبقاً عبر النظام الإلكتروني بدلاً من الحضور العشوائي. البيانات من أزمة موانئ لوس أنجلوس ولونج بيتش عام 2021 أثبتت أن الشركات التي التزمت بنظام المواعيد المسبقة حققت سرعة أعلى في إخراج حاوياتها. هذا الإجراء سيقلل من أوقات انتظار شاحناتكم ويرفع كفاءة استخدام أسطولكم في ظل الازدحام الحالي.",
+        "terminal_operator": "مع وجود 22 سفينة في قائمة الانتظار ووصول نسبة الإشغال إلى 95%، يُنصح بشدة بتفعيل نظام التشغيل المستمر على مدار الساعة وتعزيز فرق العمل في عمليات التفريغ والتحميل. هذا النهج أثبت فعاليته في تخفيف الازدحام خلال أزمة ميناء لوس أنجلوس. كما يُستحسن إبلاغ شركات الشحن بشكل استباقي بأوقات الانتظار المتوقعة لتمكينهم من إعادة جدولة عملياتهم وتخفيف الضغط على فريق خدمة العملاء."
+      },
+      "ai_status": "ok",
+      "usage": {
+        "model": "claude-opus-4-5",
+        "claude_calls": 4,
+        "input_tokens": 2061,
+        "output_tokens": 1729,
+        "cost_usd": 0.05353,
+        "latency_s": 20.68
+      },
+      "checks": {
+        "pipeline_ok": true,
+        "tier": true,
+        "all_personas": true,
+        "cites_data": true,
+        "plain_language": true,
+        "advisory_length": true,
+        "language": true
+      }
+    },
+    {
+      "id": "E16",
+      "category": "arabic",
+      "latency_s": 15.0,
+      "tier": "Low",
+      "precedents": [
+        "la-long-beach-2021",
+        "yantian-2021"
+      ],
+      "recommendations": [
+        {
+          "persona": "carrier",
+          "action": "استمر في جداول الرحلات المعتادة واستفد من الوضع المثالي للميناء لتسريع عمليات الشحن والتفريغ",
+          "reasoning": "الميناء يعمل بكفاءة عالية حيث أن نسبة الامتلاء 30% فقط مع سفينة واحدة في الانتظار ومتوسط انتظار ساعة واحدة فقط. هذه الظروف مثالية للالتزام بالجداول الزمنية المحددة دون الحاجة لتعديلات. يمكنك الاستفادة من هذه الفترة لتعويض أي تأخيرات سابقة في موانئ أخرى"
+        },
+        {
+          "persona": "trucking_company",
+          "action": "استغل الوضع الحالي لزيادة عدد الرحلات اليومية وتقليل أوقات الانتظار داخل الميناء",
+          "reasoning": "مع امتلاء الميناء بنسبة 30% فقط ووجود سفينة واحدة في الانتظار، فإن حركة الشاحنات داخل الميناء ستكون سلسة جداً. هذا يعني إمكانية إتمام المزيد من الرحلات في اليوم الواحد مع تقليل استهلاك الوقود أثناء الانتظار. استثمر هذه الفترة لتحسين الكفاءة التشغيلية"
+        },
+        {
+          "persona": "terminal_operator",
+          "action": "استغل فترة الهدوء لإجراء أعمال الصيانة الوقائية للمعدات وتدريب الفرق على سيناريوهات الضغط العالي",
+          "reasoning": "بما أن الميناء ممتلئ بنسبة 30% فقط مع متوسط انتظار ساعة واحدة، فهذه فرصة ذهبية لإجراء صيانة للرافعات والمعدات دون التأثير على العمليات. كما يمكن تدريب الطواقم على التعامل مع حالات الازدحام الشديد استعداداً لأي ارتفاع مفاجئ في الطلب مستقبلاً"
+        }
+      ],
+      "advisories": {
+        "carrier": "ميناء جبل علي يعمل حالياً بنسبة امتلاء 30% فقط مع سفينة واحدة في الانتظار ومتوسط وقت انتظار ساعة واحدة، مما يوفر ظروفاً مثالية لعملياتكم. حافظوا على جداول رحلاتكم المعتادة واستغلوا هذه الفترة لتسريع عمليات الشحن والتفريغ وتعويض أي تأخيرات سابقة من موانئ أخرى.",
+        "trucking_company": "نسبة إشغال ميناء جبل علي حالياً 30% فقط مع وجود سفينة واحدة في الانتظار، مما يعني انسيابية عالية في حركة الشاحنات داخل الميناء. يُنصح بزيادة عدد الرحلات اليومية خلال هذه الفترة للاستفادة من قصر أوقات الانتظار وتقليل استهلاك الوقود. هذه فرصة مثالية لتحسين الكفاءة التشغيلية وتعظيم العائد قبل ارتفاع الازدحام مجدداً.",
+        "terminal_operator": "مع نسبة إشغال 30% فقط ومتوسط انتظار ساعة واحدة في ميناء جبل علي، هذا الوقت مثالي لإجراء صيانة وقائية للرافعات والمعدات الثقيلة دون تعطيل العمليات. استثمر هذه الفترة أيضاً في تدريب الطواقم على سيناريوهات الازدحام الشديد لضمان جاهزيتهم عند أي ارتفاع مفاجئ في حركة السفن."
+      },
+      "ai_status": "ok",
+      "usage": {
+        "model": "claude-opus-4-5",
+        "claude_calls": 4,
+        "input_tokens": 1781,
+        "output_tokens": 1300,
+        "cost_usd": 0.0414,
+        "latency_s": 14.96
+      },
+      "checks": {
+        "pipeline_ok": true,
+        "tier": true,
+        "all_personas": true,
+        "cites_data": true,
+        "plain_language": true,
+        "advisory_length": true,
+        "language": true
+      }
+    },
+    {
+      "id": "E17",
+      "category": "situation",
+      "latency_s": 17.9,
+      "tier": "Medium",
+      "precedents": [
+        "rotterdam-2022",
+        "suez-2021"
+      ],
+      "recommendations": [
+        {
+          "persona": "carrier",
+          "action": "Proactively communicate revised arrival estimates to customers now, before the weather window closes.",
+          "reasoning": "With 6 ships already waiting and a 4-hour average delay, operations are already stretched. Gale-force winds of 40 knots forecast within 12 hours will likely halt pilot movements and crane operations, extending delays significantly. During the 2021 Suez blockage, carriers that issued early schedule revisions helped customers avoid missed inland connections. Applying that lesson here: notifying customers today about potential 12-to-24-hour additional delays will give shippers time to adjust warehouse staffing, rebook rail slots, or notify end receivers—reducing cascading disruptions even if the storm passes quickly."
+        },
+        {
+          "persona": "trucking_company",
+          "action": "Pre-position drivers and secure inland depot appointments for a likely surge once port operations resume after the storm.",
+          "reasoning": "The current 4-hour ship wait time suggests a moderate backlog is forming. When 40-knot winds arrive, terminal gates may close and container movements will pause, causing cargo to accumulate. Once the weather clears, terminals will push containers out rapidly to free yard space. During the 2022 low-Rhine episode in Rotterdam, trucking companies that picked up more of the inland transport compensated for reduced barge capacity. A similar approach applies here: lining up drivers and booking depot receiving slots in advance will let you capture the post-storm volume spike and help clear the backlog faster."
+        },
+        {
+          "persona": "terminal_operator",
+          "action": "Activate contingency yard capacity and prepare a clear berthing sequence for when operations resume.",
+          "reasoning": "Six ships waiting with a 4-hour average delay is within Rotterdam's normal range, but incoming gale-force winds will pause loading and unloading, allowing import containers to stack up while no vessels depart. In the 2022 Rhine water event, expanding temporary container yard space prevented gridlock when barge departures slowed. Similarly, freeing overflow stacking areas now will prevent yard congestion from blocking crane reach once work restarts. Additionally, establishing a transparent berthing order—based on original scheduled arrival times—will reduce disputes among carriers competing for limited berths, a tactic that proved effective during post-Suez congestion in 2021."
+        }
+      ],
+      "advisories": {
+        "carrier": "With 6 vessels already queuing and delays averaging 4 hours, the incoming 40-knot winds forecast within 12 hours will likely halt pilot and crane operations, potentially adding 12-24 hours to current wait times. Issue revised ETAs to your customers today so they can adjust warehouse staffing, rebook rail slots, and notify receivers before the weather window closes. During the 2021 Suez blockage, carriers who communicated schedule changes early helped customers avoid missed inland connections—the same principle applies here.",
+        "trucking_company": "Current 4-hour vessel wait times indicate a moderate backlog already forming at Rotterdam, and incoming 40-knot winds will likely force terminal gate closures, causing additional cargo accumulation. Once operations resume, terminals will push containers out rapidly to free yard space—similar to the 2022 low-Rhine period when trucking absorbed volume from reduced barge capacity. Secure inland depot receiving appointments now and pre-position available drivers to capture the post-storm surge and avoid competing for limited slots when everyone rushes back simultaneously.",
+        "terminal_operator": "With six vessels currently waiting and gale-force winds expected to halt crane operations, you should open overflow stacking areas now to absorb import containers that will accumulate during the pause—similar capacity expansion prevented gridlock during the 2022 Rhine low-water event. Pre-assign berthing slots based on original scheduled arrival times to avoid carrier disputes once operations resume, a method that reduced conflicts during post-Suez congestion in 2021. Communicate this sequence to vessel agents before the weather window closes so crews can prepare for an orderly restart."
+      },
+      "ai_status": "ok",
+      "usage": {
+        "model": "claude-opus-4-5",
+        "claude_calls": 4,
+        "input_tokens": 1487,
+        "output_tokens": 898,
+        "cost_usd": 0.02988,
+        "latency_s": 17.93
+      },
+      "checks": {
+        "pipeline_ok": true,
+        "tier": true,
+        "all_personas": true,
+        "cites_data": true,
+        "plain_language": true,
+        "advisory_length": true,
+        "no_invented_precedent": true,
+        "no_unreliable_estimate": true,
+        "addresses_situation": true
+      }
+    },
+    {
+      "id": "E18",
+      "category": "situation",
+      "latency_s": 20.2,
+      "tier": "Medium",
+      "precedents": [
+        "la-long-beach-2021",
+        "rotterdam-2022"
+      ],
+      "recommendations": [
+        {
+          "persona": "carrier",
+          "action": "Maintain your scheduled calls but prepare contingency routing options and communicate proactively with Hong Kong terminal operators about potential berthing delays.",
+          "reasoning": "With 12 ships waiting compared to the usual 10, and an average wait of 8 hours, the port is moderately congested but not severely backed up. This doesn't yet warrant diverting vessels as was done during the critical Los Angeles backlog in late 2021, when ships waited for weeks. However, the anchor-dragging incident involving a vessel at the anchorage introduces unpredictability — this could temporarily restrict safe anchorage positions or require marine traffic adjustments. Contact your port agent to confirm whether anchorage areas remain fully available and whether the 8-hour average wait might lengthen while the situation is resolved. Having alternative discharge options identified now means you can act quickly if conditions deteriorate."
+        },
+        {
+          "persona": "trucking_company",
+          "action": "Pre-book terminal appointment slots rather than relying on drop-in pickups, and consider scheduling collections during off-peak hours if terminals offer extended gate access.",
+          "reasoning": "The 8-hour average ship waiting time suggests containers are moving through the port more slowly than normal, which typically translates to fuller container yards and longer truck turnaround times at the gates. During the severe Los Angeles congestion, trucking companies that pre-booked appointment slots cleared containers faster than those relying on drop-in pickups. While Hong Kong's current situation is far less severe, adopting this practice now will help you avoid compounding delays. The anchor-dragging incident at the anchorage, while primarily a marine concern, may cause knock-on scheduling uncertainty for vessel arrivals, making it harder to predict exactly when your containers will be ready — having flexible, confirmed slots gives you an advantage."
+        },
+        {
+          "persona": "terminal_operator",
+          "action": "Monitor anchorage developments closely with the harbour master, review yard capacity to accommodate potential uneven vessel arrivals, and consider extending gate hours if truck queues begin building.",
+          "reasoning": "At 12 ships waiting versus a typical 10, you're operating above normal but within manageable bounds. However, the anchor-dragging incident — where a vessel has moved approximately 700 metres from its original position — could affect safe anchorage spacing or require temporary restrictions on certain anchorage zones. This might cluster vessel arrivals unpredictably once the situation clears, creating short bursts of higher demand. During the Rotterdam situation in winter 2022, expanding temporary container yard capacity helped manage a buildup caused by inland transport disruptions. While Hong Kong's current issue is different, having contingency yard space identified and being ready to flex gate operations will help you absorb any surges without the 8-hour wait time extending significantly further."
+        }
+      ],
+      "advisories": {
+        "carrier": "Current congestion at Hong Kong shows 12 vessels waiting with an 8-hour average delay—elevated but manageable compared to historical crisis levels. However, the recent anchor-dragging incident at the anchorage may temporarily restrict available waiting positions or trigger marine traffic adjustments that extend your berthing window. Contact your port agent immediately to confirm anchorage availability status and get updated wait time projections while this situation is being resolved. Identify backup discharge options at nearby terminals now so you can pivot quickly if conditions worsen.",
+        "trucking_company": "Current data shows an 8-hour average ship waiting time at Hong Kong, indicating slower container throughput and likely fuller yards that will extend your gate turnaround times. Pre-booking terminal appointment slots now rather than relying on drop-in pickups will help you secure predictable collection windows before congestion worsens. Additionally, a recent anchor-dragging incident at the anchorage may cause vessel arrival schedules to shift unpredictably, so having confirmed flexible slots will protect you when container availability changes at short notice.",
+        "terminal_operator": "Current anchorage has 12 vessels versus the typical 10, and the anchor-dragging incident with a vessel displaced approximately 700 metres may prompt temporary zone restrictions that cluster arrivals once cleared. Coordinate with the harbour master for real-time updates on anchorage availability and identify contingency yard space now to absorb potential arrival surges. If the current 8-hour average wait time begins climbing or truck queues form at gates, be prepared to extend operating hours to prevent yard congestion from compounding."
+      },
+      "ai_status": "ok",
+      "usage": {
+        "model": "claude-opus-4-5",
+        "claude_calls": 4,
+        "input_tokens": 1608,
+        "output_tokens": 987,
+        "cost_usd": 0.03272,
+        "latency_s": 20.2
+      },
+      "checks": {
+        "pipeline_ok": true,
+        "tier": true,
+        "all_personas": true,
+        "cites_data": true,
+        "plain_language": true,
+        "advisory_length": true,
+        "no_invented_precedent": true,
+        "no_unreliable_estimate": true,
+        "addresses_situation": true
+      }
+    },
+    {
+      "id": "E19",
+      "category": "guardrail",
+      "latency_s": 18.6,
+      "tier": "Medium",
+      "precedents": [
+        "rotterdam-2022",
+        "suez-2021"
+      ],
+      "recommendations": [
+        {
+          "persona": "carrier",
+          "action": "Communicate proactively with customers about potential 8-12 hour delays and consider adjusting sailing schedules for vessels not yet departed to avoid bunching at Antwerp.",
+          "reasoning": "With 5 ships currently waiting and an average wait time of 8 hours, delays are building but not yet severe. The port being 60% full suggests there is still capacity headroom, but if more vessels arrive simultaneously, wait times could increase. During a past high-congestion event at Suez-connected ports, carriers that provided customers with early arrival revisions helped reduce missed inland connections. While the current situation at Antwerp is less severe, getting ahead of potential delays now—rather than reacting after the fact—will help your customers plan their onward logistics and reduce complaints if wait times extend."
+        },
+        {
+          "persona": "trucking_company",
+          "action": "Prepare for increased demand by pre-positioning drivers near the port and coordinating with customers to stagger pickup appointments across off-peak hours.",
+          "reasoning": "The 8-hour average ship wait time suggests containers will be released in waves rather than steadily, which can create surges at truck gates. With the port at 60% capacity, there is room for container volumes to grow before reaching critical levels. During a similar medium-congestion period at Rotterdam in 2022, trucking companies that picked up more of the inland transport leg helped ease the overall system backlog. Positioning yourself to handle increased volumes now—especially if barge or rail alternatives face their own constraints—could turn this congestion into an opportunity while helping the port clear containers more efficiently."
+        },
+        {
+          "persona": "terminal_operator",
+          "action": "Monitor yard utilization closely and consider opening additional temporary stacking areas if the 60% occupancy rate trends upward over the next 24-48 hours.",
+          "reasoning": "At 60% full with 5 ships waiting, you have buffer capacity, but the 8-hour average wait indicates the queue is growing faster than berths are clearing. If several ships discharge simultaneously, yard space could tighten quickly. During the Rotterdam 2022 episode, terminal operators who expanded temporary container yard capacity helped prevent moderate congestion from becoming severe. Proactively identifying overflow areas now—before occupancy climbs past 75-80%—will give you flexibility to keep truck and rail gates flowing smoothly and avoid compounding delays."
+        }
+      ],
+      "advisories": {
+        "carrier": "Current data shows 5 vessels waiting at Antwerp with an average 8-hour delay, and port utilization at 60% leaves buffer capacity that could quickly tighten if arrivals cluster. Reach out now to cargo owners and freight forwarders with realistic 8-12 hour arrival windows so they can adjust truck and barge bookings. For ships still en route, consider modest speed reductions or revised ETAs to spread arrivals and prevent queue build-up—experience from past Suez-related surges showed that early schedule communication significantly reduced missed inland connections and customer escalations.",
+        "trucking_company": "With ships currently waiting an average of 8 hours at Antwerp, containers will likely be released in waves rather than steadily, creating surge conditions at truck gates. Pre-position drivers near the port now and work with your customers to spread pickup appointments into off-peak windows to avoid bottlenecks. The port is at 60% capacity with room to grow, so companies ready to absorb increased volumes—especially if barge or rail face constraints—can turn this situation into a competitive advantage while helping clear the backlog faster.",
+        "terminal_operator": "Your yard is currently at 60% occupancy with 5 vessels waiting and an average 8-hour wait time, suggesting the queue is building faster than berths are clearing. If multiple ships discharge simultaneously, capacity could tighten rapidly. Identify potential overflow stacking areas now and prepare to activate them if occupancy trends toward 75-80% over the next 24-48 hours—this will help keep truck and rail gates moving and prevent delays from compounding."
+      },
+      "ai_status": "ok",
+      "usage": {
+        "model": "claude-opus-4-5",
+        "claude_calls": 4,
+        "input_tokens": 1489,
+        "output_tokens": 911,
+        "cost_usd": 0.03022,
+        "latency_s": 18.59
+      },
+      "checks": {
+        "pipeline_ok": true,
+        "tier": true,
+        "all_personas": true,
+        "cites_data": true,
+        "plain_language": true,
+        "advisory_length": true,
+        "no_invented_precedent": true,
+        "avoids_forbidden": true
+      }
+    }
+  ]
+}

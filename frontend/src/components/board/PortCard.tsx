@@ -4,16 +4,36 @@ import Link from "next/link";
 import { ArrowRight, Radio, RadioTower } from "lucide-react";
 import { Card, CardBody } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { Sparkline } from "@/components/ui/Sparkline";
+import { TierBadge } from "@/components/ui/TierBadge";
 import { useLocale } from "@/components/LocaleProvider";
+import { describeTrend, fill, formatUsd } from "@/lib/format";
+import { TIER_STYLES } from "@/lib/tier";
+import { cn } from "@/lib/cn";
 import type { LiveVesselQueue } from "@/lib/types";
 
 export function PortCard({ port }: { port: LiveVesselQueue }) {
-  const { t } = useLocale();
+  const { locale, t } = useLocale();
   const hasSignal = port.live_coverage && !port.warming_up;
+  const tierLabel = port.tier ? t(TIER_STYLES[port.tier].labelKey) : t("tierUnknown");
+  const summary = port.live_coverage
+    ? fill(t("portCardSummary"), {
+        port: port.port_name,
+        country: port.country,
+        tier: tierLabel,
+        n: port.vessel_queue_length,
+        usual: port.queue_baseline != null ? fill(t("usualQueue"), { n: Math.round(port.queue_baseline) }) : "",
+      })
+    : fill(t("portCardSummaryNoData"), { port: port.port_name, country: port.country });
 
   return (
-    <Link href={`/port/${port.port_id}`} className="group block">
-      <Card className="transition-shadow group-hover:shadow-raised">
+    <Link href={`/port/${port.port_id}`} className="group block" aria-label={summary}>
+      <Card
+        className={cn(
+          "transition-shadow group-hover:shadow-raised",
+          port.tier && `border-s-4 ${TIER_STYLES[port.tier].border}`,
+        )}
+      >
         <CardBody className="flex flex-col gap-4">
           <div className="flex items-start justify-between gap-3">
             <div>
@@ -33,18 +53,46 @@ export function PortCard({ port }: { port: LiveVesselQueue }) {
             )}
           </div>
 
-          <div className="flex items-end justify-between">
+          <div className="flex items-end justify-between gap-3">
             <div>
-              <div className="text-2xl font-semibold tabular-nums text-ink">
-                {port.vessel_queue_length}
+              <div className="text-2xl font-semibold tabular-nums text-ink">{port.vessel_queue_length}</div>
+              <div className="text-xs text-ink-faint">
+                {t("shipsWaitingRightNow")}
+                {port.queue_baseline != null && (
+                  <span> · {fill(t("usualQueue"), { n: Math.round(port.queue_baseline) })}</span>
+                )}
               </div>
-              <div className="text-xs text-ink-faint">{t("shipsWaitingRightNow")}</div>
             </div>
-            <span className="flex items-center gap-1 text-xs font-medium text-accent opacity-0 transition-opacity group-hover:opacity-100">
-              {t("seeRecommendations")}
-              <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" />
-            </span>
+            {port.tier ? (
+              <TierBadge tier={port.tier} className="text-xs" />
+            ) : (
+              port.live_coverage && <span className="text-xs text-ink-faint">{t("tierUnknown")}</span>
+            )}
           </div>
+
+          {port.live_coverage && (
+            <div className="flex items-end justify-between gap-3 border-t border-border pt-3">
+              <div className="min-w-0">
+                <div className="text-[11px] uppercase tracking-wide text-ink-faint">{t("last24h")}</div>
+                {port.trend.length >= 2 ? (
+                  <Sparkline points={port.trend} label={describeTrend(port.trend, t("trendSummary"))} className="mt-1" />
+                ) : (
+                  <div className="mt-1 text-xs text-ink-faint">{t("trendBuilding")}</div>
+                )}
+              </div>
+              {port.idle_cost_usd !== null && port.idle_cost_usd > 0 && (
+                <div className="text-end">
+                  <div className="text-[11px] uppercase tracking-wide text-ink-faint">{t("idleCostLabel")}</div>
+                  <div className="text-sm font-semibold tabular-nums text-ink">{formatUsd(port.idle_cost_usd, locale)}</div>
+                </div>
+              )}
+            </div>
+          )}
+
+          <span className="flex items-center gap-1 text-xs font-medium text-accent opacity-0 transition-opacity group-hover:opacity-100">
+            {t("seeRecommendations")}
+            <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" />
+          </span>
         </CardBody>
       </Card>
     </Link>
