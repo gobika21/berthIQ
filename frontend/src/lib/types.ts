@@ -59,6 +59,10 @@ export interface PortSnapshot {
   vessel_queue_length: number;
   avg_waiting_time_hours: number;
   language?: "en" | "ar";
+  // Which metrics count towards the level (default: all three) and the port's usual
+  // queue — sent so on-demand advice is rated the same way as the live board.
+  tier_metrics?: MetricKey[];
+  queue_baseline?: number;
 }
 
 export interface Recommendation {

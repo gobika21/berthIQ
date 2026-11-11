@@ -114,3 +114,23 @@ def test_live_board_has_tier_fields(client):
     jebel = next(p for p in ports if p["port_id"] == "jebel_ali")
     assert jebel["tier"] is None   # no coverage -> no trustworthy tier
     assert "trend" in jebel
+
+
+def test_on_demand_advice_is_rated_like_the_live_board(client):
+    """The port page sends the board's rules (queue vs the port's usual level, plus delay;
+    the rough fullness guess left out), so it must get the board's level."""
+    from app.agents.classification import classify_snapshot
+    from app.monitoring.monitor import pipeline_snapshot
+
+    live = {"port_name": "Singapore", "berth_occupancy_rate": 0.99, "vessel_queue_length": 22,
+            "avg_waiting_time_hours": 6}
+    board_tier = classify_snapshot(pipeline_snapshot(live, queue_baseline=20))["tier"]
+
+    page = {**live, "tier_metrics": ["vessel_queue_length", "avg_waiting_time_hours"], "queue_baseline": 20}
+    body = client.post("/advisory", json=page).json()
+    assert body["tier"] == board_tier == "Medium"
+    assert "berth_occupancy_rate" not in body["evidence"]["metric_tiers"]   # the guess didn't count
+
+    # Before the fix the page sent all three numbers and no baseline: the 99% guess decided it.
+    old = client.post("/advisory", json=live).json()
+    assert old["tier"] != board_tier

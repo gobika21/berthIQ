@@ -56,10 +56,11 @@ export const TRANSLATIONS: Record<Locale, Dict> = {
 
     fillInWhatYouKnow: "Fill in what you know",
     fillInDescription:
-      "Ports don't publish how full their berths are or how long ships actually wait, so those two numbers are your best estimate — adjust them if you know better. The number of ships waiting comes straight from live tracking.",
+      "These start from live ship tracking. How full the port is can only be guessed, so it counts towards the level only if you enter your own figure. Change the delay too if you know better.",
     howFullThePort: "How full the port is",
     averageDelay: "Average delay",
     getRecommendations: "Get recommendations",
+    resetToLive: "Reset to live values",
 
     whatEachGroupShouldDo: "What each group should do",
     why: "Why?",
@@ -242,10 +243,11 @@ export const TRANSLATIONS: Record<Locale, Dict> = {
 
     fillInWhatYouKnow: "أدخل ما تعرفه",
     fillInDescription:
-      "لا تنشر الموانئ نسبة امتلاء أرصفتها أو مدة انتظار السفن الفعلية، لذا فإن هذين الرقمين هما أفضل تقدير لديك — عدّلهما إذا كانت لديك معلومات أدق. عدد السفن المنتظرة يأتي مباشرة من التتبع المباشر.",
+      "تبدأ هذه القيم من التتبع المباشر للسفن. لا يمكن سوى تخمين نسبة امتلاء الميناء، لذا لا تُحتسب في المستوى إلا إذا أدخلت رقمك الخاص. عدّل مدة التأخير أيضًا إذا كانت لديك معلومات أدق.",
     howFullThePort: "نسبة امتلاء الميناء",
     averageDelay: "متوسط التأخير",
     getRecommendations: "احصل على التوصيات",
+    resetToLive: "إعادة إلى القيم المباشرة",
 
     whatEachGroupShouldDo: "ما الذي يجب أن تفعله كل جهة",
     why: "لماذا؟",

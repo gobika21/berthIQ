@@ -20,7 +20,7 @@ import { api, ApiError } from "@/lib/api";
 import { useLiveVesselQueue } from "@/lib/hooks";
 import { TIER_STYLES } from "@/lib/tier";
 import { fill } from "@/lib/format";
-import type { AdvisoryResult, PortSnapshot } from "@/lib/types";
+import type { AdvisoryResult, MetricKey, PortSnapshot } from "@/lib/types";
 
 // Leaflet touches `window` at import time, so it can only run in the browser.
 const ShipMap = dynamic(() => import("@/components/board/ShipMap").then((m) => m.ShipMap), {
@@ -32,13 +32,13 @@ export function PortAdvisoryView({ portId }: { portId: string }) {
   const { data: live, loading: liveLoading, error: liveError } = useLiveVesselQueue(portId, true);
   const { locale, t } = useLocale();
 
-  const DEFAULT_FULL_PERCENT = 60;
-  const DEFAULT_DELAY_HOURS = 8;
-
+  // The two fields follow the live reading until the person types their own figure.
   // "How full" is edited as a whole percent (0-100) — much clearer for a general
   // audience than a raw 0-1 fraction — and only converted to a fraction at submit time.
-  const [fullPercent, setFullPercent] = useState(DEFAULT_FULL_PERCENT);
-  const [avgWaitHours, setAvgWaitHours] = useState(DEFAULT_DELAY_HOURS);
+  const [fullPercent, setFullPercent] = useState(0);
+  const [avgWaitHours, setAvgWaitHours] = useState(0);
+  const [fullEdited, setFullEdited] = useState(false);
+  const [waitEdited, setWaitEdited] = useState(false);
   const [result, setResult] = useState<AdvisoryResult | null>(null);
   // The exact numbers sent to the backend for `result` — kept separate from the live
   // inputs above so the results below can't silently drift out of sync with the live
@@ -82,16 +82,15 @@ export function PortAdvisoryView({ portId }: { portId: string }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale]);
 
-  // Manual estimates only need a sane starting point once live data first arrives.
-  useEffect(() => {
-    if (live && live.vessels_observed > 0) {
-      setFullPercent((prev) => (prev === DEFAULT_FULL_PERCENT ? Math.round(Math.min(95, 30 + vesselQueueLength * 4)) : prev));
-      setAvgWaitHours((prev) =>
-        prev === DEFAULT_DELAY_HOURS ? Math.round(Math.min(48, vesselQueueLength * 1.2) * 2) / 2 : prev,
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [live?.vessels_observed]);
+  // Live values: the same estimates the board uses when the port has a live level,
+  // otherwise a rough starting point derived from the queue.
+  const liveFullPercent =
+    live?.berth_occupancy_rate != null
+      ? Math.round(live.berth_occupancy_rate * 100)
+      : Math.round(Math.min(95, 30 + vesselQueueLength * 4));
+  const liveWaitHours = live?.avg_waiting_time_hours ?? Math.round(Math.min(48, vesselQueueLength * 1.2) * 2) / 2;
+  const shownFullPercent = fullEdited ? fullPercent : liveFullPercent;
+  const shownWaitHours = waitEdited ? avgWaitHours : Math.round(liveWaitHours * 10) / 10;
 
   async function runAdvisoryFor(snapshot: PortSnapshot) {
     const requestId = ++requestIdRef.current;
@@ -114,11 +113,18 @@ export function PortAdvisoryView({ portId }: { portId: string }) {
 
   function runAdvisory() {
     if (!live) return;
+    // Rate it exactly like the live board: the queue (against this port's usual level)
+    // and the delay. The fullness figure is only a guess, so it counts only when the
+    // person entered their own.
+    const tierMetrics: MetricKey[] = ["vessel_queue_length", "avg_waiting_time_hours"];
+    if (fullEdited) tierMetrics.push("berth_occupancy_rate");
     runAdvisoryFor({
       port_name: live.port_name,
-      berth_occupancy_rate: fullPercent / 100,
+      berth_occupancy_rate: shownFullPercent / 100,
       vessel_queue_length: vesselQueueLength,
-      avg_waiting_time_hours: avgWaitHours,
+      avg_waiting_time_hours: waitEdited ? avgWaitHours : liveWaitHours,
+      tier_metrics: tierMetrics,
+      ...(live.queue_baseline != null ? { queue_baseline: live.queue_baseline } : {}),
       language: locale,
     });
   }
@@ -157,8 +163,11 @@ export function PortAdvisoryView({ portId }: { portId: string }) {
             <div className="flex flex-col gap-3">
               <NumberField
                 label={t("howFullThePort")}
-                value={fullPercent}
-                onChange={(v) => setFullPercent(Math.round(v))}
+                value={shownFullPercent}
+                onChange={(v) => {
+                  setFullPercent(Math.round(v));
+                  setFullEdited(true);
+                }}
                 step={5}
                 min={0}
                 max={100}
@@ -166,12 +175,27 @@ export function PortAdvisoryView({ portId }: { portId: string }) {
               />
               <NumberField
                 label={t("averageDelay")}
-                value={avgWaitHours}
-                onChange={(v) => setAvgWaitHours(Math.round(v * 2) / 2)}
+                value={shownWaitHours}
+                onChange={(v) => {
+                  setAvgWaitHours(Math.round(v * 2) / 2);
+                  setWaitEdited(true);
+                }}
                 step={0.5}
                 min={0}
                 suffix="hrs"
               />
+              {(fullEdited || waitEdited) && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFullEdited(false);
+                    setWaitEdited(false);
+                  }}
+                  className="self-start text-xs font-medium text-accent hover:text-accent-hover hover:underline"
+                >
+                  {t("resetToLive")}
+                </button>
+              )}
             </div>
             <div className="mt-auto pt-1">
               <Button onClick={runAdvisory} loading={running} className="w-full justify-center">
@@ -205,6 +229,11 @@ export function PortAdvisoryView({ portId }: { portId: string }) {
                 <MetricTile
                   label={t("howFullThePort")}
                   value={`${Math.round(submittedSnapshot.berth_occupancy_rate * 100)}%`}
+                  hint={
+                    submittedSnapshot.tier_metrics && !submittedSnapshot.tier_metrics.includes("berth_occupancy_rate")
+                      ? t("notUsedForTier")
+                      : undefined
+                  }
                 />
                 <MetricTile label={t("shipsWaiting")} value={submittedSnapshot.vessel_queue_length} />
                 <MetricTile label={t("averageDelay")} value={`${submittedSnapshot.avg_waiting_time_hours}h`} />
