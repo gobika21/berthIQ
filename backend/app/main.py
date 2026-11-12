@@ -138,8 +138,9 @@ def list_scenarios():
 def _with_live_tier(live: dict, lang: str = "en") -> dict:
     """Add the current congestion tier, 24 h trend and idle-cost estimate to a live reading."""
     port_id = live["port_id"]
-    if not live["live_coverage"] or live["warming_up"]:
-        # A port we can't see (or haven't watched long enough) has no trustworthy tier.
+    if not live["live_coverage"] or not live["connected"] or live["warming_up"]:
+        # A port we can't see (no coverage, feed down, or not watched long enough) has no
+        # trustworthy tier: "0 ships waiting" from a dead feed must not read as "Low".
         return {**live, "tier": None, "metric_tiers": None, "trend": history.trend(port_id), "idle_cost_usd": None,
                 "queue_baseline": None}
     baseline = history.baseline(port_id)

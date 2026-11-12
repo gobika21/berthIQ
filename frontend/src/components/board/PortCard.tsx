@@ -14,7 +14,7 @@ import type { LiveVesselQueue } from "@/lib/types";
 
 export function PortCard({ port }: { port: LiveVesselQueue }) {
   const { locale, t } = useLocale();
-  const hasSignal = port.live_coverage && !port.warming_up;
+  const hasSignal = port.live_coverage && port.connected && !port.warming_up;
   const hasTrend = port.trend.length >= 2;
   const hasIdleCost = port.idle_cost_usd !== null && port.idle_cost_usd > 0;
   const tierLabel = port.tier ? t(TIER_STYLES[port.tier].labelKey) : t("tierUnknown");
@@ -42,7 +42,7 @@ export function PortCard({ port }: { port: LiveVesselQueue }) {
               <div className="text-[15px] font-semibold text-ink">{port.port_name}</div>
               <div className="text-xs text-ink-faint">{port.country}</div>
             </div>
-            {/* While warming up, the board shows one shared "connecting" note instead of a badge per card. */}
+            {/* While connecting or offline, the board shows one shared note instead of a badge per card. */}
             {port.live_coverage ? (
               hasSignal && (
                 <Badge tone="success">

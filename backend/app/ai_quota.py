@@ -9,7 +9,7 @@ import os
 import threading
 from datetime import datetime, timezone
 
-FREE_AI_RUNS_PER_DAY = int(os.environ.get("FREE_AI_RUNS_PER_DAY", 20))
+FREE_AI_RUNS_PER_DAY = int(os.environ.get("FREE_AI_RUNS_PER_DAY", 10))
 
 _lock = threading.Lock()
 _state = {"day": "", "used": 0}

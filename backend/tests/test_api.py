@@ -134,3 +134,11 @@ def test_on_demand_advice_is_rated_like_the_live_board(client):
     # Before the fix the page sent all three numbers and no baseline: the 99% guess decided it.
     old = client.post("/advisory", json=live).json()
     assert old["tier"] != board_tier
+
+
+def test_board_shows_no_level_when_the_ship_feed_is_down():
+    """A dead feed reports 0 ships; that must not be shown as a "Low" congestion level."""
+    live = {"port_id": "rotterdam", "live_coverage": True, "connected": False, "warming_up": False,
+            "vessel_queue_length": 0, "last_error": "AISSTREAM_API_KEY is not set"}
+    out = main._with_live_tier(live)
+    assert out["tier"] is None and out["metric_tiers"] is None and out["idle_cost_usd"] is None

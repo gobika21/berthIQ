@@ -33,9 +33,16 @@ export function PortBoard() {
 
   // One note for the whole board instead of repeating "Connecting" / "Trend builds…" on every card.
   const tracked = ports.filter((p) => p.live_coverage);
-  const warming = tracked.filter((p) => p.warming_up).length;
+  const offline = tracked.length > 0 && tracked.every((p) => !p.connected);
+  const warming = tracked.filter((p) => !p.connected || p.warming_up).length;
   const trendsBuilding = tracked.some((p) => p.trend.length < 2);
-  const note = warming > 0 ? fill(t("boardConnecting"), { n: warming }) : trendsBuilding ? t("boardTrendBuilding") : null;
+  const note = offline
+    ? t("boardOffline")
+    : warming > 0
+      ? fill(t("boardConnecting"), { n: warming })
+      : trendsBuilding
+        ? t("boardTrendBuilding")
+        : null;
 
   return (
     <div className="flex flex-col gap-4">
@@ -44,7 +51,7 @@ export function PortBoard() {
           role="status"
           className="flex items-center gap-2 self-start rounded-sm border border-border bg-surface px-3 py-2 text-xs text-ink-muted"
         >
-          <Radio className={`h-3.5 w-3.5 flex-none ${warming > 0 ? "animate-pulse" : ""}`} strokeWidth={2} aria-hidden="true" />
+          <Radio className={`h-3.5 w-3.5 flex-none ${warming > 0 && !offline ? "animate-pulse" : ""}`} strokeWidth={2} aria-hidden="true" />
           {note}
         </p>
       )}
