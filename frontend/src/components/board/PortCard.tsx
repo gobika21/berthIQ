@@ -15,6 +15,8 @@ import type { LiveVesselQueue } from "@/lib/types";
 export function PortCard({ port }: { port: LiveVesselQueue }) {
   const { locale, t } = useLocale();
   const hasSignal = port.live_coverage && !port.warming_up;
+  const hasTrend = port.trend.length >= 2;
+  const hasIdleCost = port.idle_cost_usd !== null && port.idle_cost_usd > 0;
   const tierLabel = port.tier ? t(TIER_STYLES[port.tier].labelKey) : t("tierUnknown");
   const summary = port.live_coverage
     ? fill(t("portCardSummary"), {
@@ -40,11 +42,14 @@ export function PortCard({ port }: { port: LiveVesselQueue }) {
               <div className="text-[15px] font-semibold text-ink">{port.port_name}</div>
               <div className="text-xs text-ink-faint">{port.country}</div>
             </div>
+            {/* While warming up, the board shows one shared "connecting" note instead of a badge per card. */}
             {port.live_coverage ? (
-              <Badge tone={hasSignal ? "success" : "neutral"}>
-                <Radio className="h-3 w-3" strokeWidth={2} />
-                {hasSignal ? t("live") : t("connecting")}
-              </Badge>
+              hasSignal && (
+                <Badge tone="success">
+                  <Radio className="h-3 w-3" strokeWidth={2} />
+                  {t("live")}
+                </Badge>
+              )
             ) : (
               <Badge tone="neutral">
                 <RadioTower className="h-3 w-3" strokeWidth={2} />
@@ -66,24 +71,25 @@ export function PortCard({ port }: { port: LiveVesselQueue }) {
             {port.tier ? (
               <TierBadge tier={port.tier} className="text-xs" />
             ) : (
-              port.live_coverage && <span className="text-xs text-ink-faint">{t("tierUnknown")}</span>
+              hasSignal && <span className="text-xs text-ink-faint">{t("tierUnknown")}</span>
             )}
           </div>
 
-          {port.live_coverage && (
+          {/* Trend row only once there is something to show; the board explains the wait once. */}
+          {port.live_coverage && (hasTrend || hasIdleCost) && (
             <div className="flex items-end justify-between gap-3 border-t border-border pt-3">
               <div className="min-w-0">
                 <div className="text-[11px] uppercase tracking-wide text-ink-faint">{t("last24h")}</div>
-                {port.trend.length >= 2 ? (
+                {hasTrend ? (
                   <Sparkline points={port.trend} label={describeTrend(port.trend, t("trendSummary"))} className="mt-1" />
                 ) : (
                   <div className="mt-1 text-xs text-ink-faint">{t("trendBuilding")}</div>
                 )}
               </div>
-              {port.idle_cost_usd !== null && port.idle_cost_usd > 0 && (
+              {hasIdleCost && (
                 <div className="text-end">
                   <div className="text-[11px] uppercase tracking-wide text-ink-faint">{t("idleCostLabel")}</div>
-                  <div className="text-sm font-semibold tabular-nums text-ink">{formatUsd(port.idle_cost_usd, locale)}</div>
+                  <div className="text-sm font-semibold tabular-nums text-ink">{formatUsd(port.idle_cost_usd ?? 0, locale)}</div>
                 </div>
               )}
             </div>

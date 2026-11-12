@@ -26,6 +26,9 @@ export const TRANSLATIONS: Record<Locale, Dict> = {
     shipsWaitingRightNow: "ships waiting right now",
     live: "Live",
     connecting: "Connecting",
+    boardConnecting:
+      "Connecting to live ship tracking for {n} ports. Ship counts are coming in; congestion levels appear in a few minutes.",
+    boardTrendBuilding: "Live. The 24-hour trend lines fill in as BerthIQ keeps watching.",
     noLiveData: "No live data",
     seeRecommendations: "See recommendations",
     noPortsTitle: "No ports available",
@@ -214,6 +217,9 @@ export const TRANSLATIONS: Record<Locale, Dict> = {
     shipsWaitingRightNow: "سفينة تنتظر الآن",
     live: "مباشر",
     connecting: "جارٍ الاتصال",
+    boardConnecting:
+      "جارٍ الاتصال بتتبّع السفن المباشر لـ {n} موانئ. أعداد السفن تصل الآن، وتظهر مستويات الازدحام خلال دقائق.",
+    boardTrendBuilding: "مباشر. تكتمل خطوط اتجاه آخر 24 ساعة مع استمرار المراقبة.",
     noLiveData: "لا توجد بيانات مباشرة",
     seeRecommendations: "عرض التوصيات",
     noPortsTitle: "لا توجد موانئ متاحة",
