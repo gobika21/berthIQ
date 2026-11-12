@@ -4,6 +4,7 @@ load_dotenv()
 
 import logging
 import os
+import re
 import time
 from collections import defaultdict, deque
 from contextlib import asynccontextmanager
@@ -14,6 +15,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.advisory_service import run_advisory
 from app.agents.classification import classify_snapshot
 from app.agents.monitoring import SnapshotValidationError
+from app import ai_quota
+from app.ai_quota import claim_free_run, free_runs_left, server_key_available
+from app.claude_client import set_access
 from app.impact import estimate_impact
 from app.live.aisstream_client import (
     PORTS,
@@ -61,7 +65,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
     allow_methods=["GET", "POST"],
-    allow_headers=["Content-Type"],
+    allow_headers=["Content-Type", "X-Anthropic-Key"],
 )
 
 
@@ -82,6 +86,27 @@ def enforce_llm_rate_limit(request: Request) -> None:
     window.append(now)
 
 
+# ---------------------------------------------------------------- who pays for Claude
+# A visitor may send their own Anthropic key in the X-Anthropic-Key header. It is used
+# for that request only: never stored, logged or returned. Without one, the run comes
+# out of the server's small free daily quota; once that is used up the agents still
+# answer, with rule-based advice (ai_status "fallback", ai_error "free_quota_used").
+_KEY_PATTERN = re.compile(r"^sk-ant-[A-Za-z0-9_\-]{20,200}$")
+def choose_claude_access(request: Request) -> None:
+    """Decide whose key pays for this request's Claude calls (see claude_client.set_access)."""
+    own_key = request.headers.get("x-anthropic-key", "").strip()
+    if own_key:
+        if not _KEY_PATTERN.match(own_key):
+            raise HTTPException(status_code=400, detail="That doesn't look like an Anthropic API key (it should start with sk-ant-).")
+        set_access(("own", own_key))
+    elif not server_key_available():
+        set_access(("none", "no_key"))
+    elif claim_free_run():
+        set_access(("server",))
+    else:
+        set_access(("none", "free_quota_used"))
+
+
 def _run_advisory_or_http_error(snapshot: dict) -> dict:
     try:
         return run_advisory(snapshot)
@@ -96,6 +121,12 @@ def _run_advisory_or_http_error(snapshot: dict) -> dict:
 @app.get("/health")
 def health():
     return {"status": "ok", "monitor_last_tick": monitor.last_tick_at}
+
+
+@app.get("/ai/quota")
+def get_ai_quota():
+    """How many free AI runs (on the server's key) are left today, for all visitors together."""
+    return {"free_runs_per_day": ai_quota.FREE_AI_RUNS_PER_DAY if server_key_available() else 0, "free_runs_left": free_runs_left()}
 
 
 @app.get("/scenarios")
@@ -162,6 +193,7 @@ def live_history(port: str, hours: float = 24):
 @app.post("/advisory")
 def advisory(request: Request, snapshot: PortSnapshot):
     enforce_llm_rate_limit(request)
+    choose_claude_access(request)
     data = dict(snapshot)
     data.pop("situation", None)  # only the monitor may add alert context to the prompt
     return _run_advisory_or_http_error(data)
@@ -175,6 +207,7 @@ def live_advisory(request: Request, port: str, lang: str = "en"):
     except AISStreamError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     enforce_llm_rate_limit(request)
+    choose_claude_access(request)
     result = _run_advisory_or_http_error({**pipeline_snapshot(snapshot), "language": lang})
     return {"snapshot": snapshot, **result}
 
@@ -232,6 +265,7 @@ async def request_advisory(request: Request, alert_id: str):
     """Ask the agents to draft (or re-draft) advice for an alert; it then awaits approval."""
     _alert_or_404(alert_id)
     enforce_llm_rate_limit(request)
+    choose_claude_access(request)  # inherited by the background drafting task
     try:
         monitor.schedule_advisory(alert_id)
     except AlertError as exc:
@@ -249,13 +283,15 @@ async def demo_replay(request: Request, port: str = "rotterdam"):
     if port not in PORTS:
         raise HTTPException(status_code=400, detail=f"Unknown port '{port}'")
     enforce_llm_rate_limit(request)
+    choose_claude_access(request)
 
     port_name = PORTS[port]["name"]["en"]
     snap = {**SCENARIOS["high"], "port_name": port_name}
     cls = classify_snapshot(snap)
     spec = escalation_alert(port, port_name, "Medium", cls["tier"], cls, snap)
     spec["title"] = {k: f"[Demo] {v}" for k, v in spec["title"].items()}
-    alert = monitor.raise_alert(port, port_name, spec, snap, demo=True)
+    # Drafted below with this visitor's access (their key or a free run), not the monitor's.
+    alert = monitor.raise_alert(port, port_name, spec, snap, demo=True, auto_advise=False)
     if alert and alert["advisory_status"] == "none":
         monitor.schedule_advisory(alert["id"])
     return alerts.get(alert["id"])

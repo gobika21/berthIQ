@@ -103,6 +103,30 @@ export const TRANSLATIONS: Record<Locale, Dict> = {
 
     impactTitle: "What it's worth",
     estimate: "Estimate",
+    close: "Close",
+    aiKeyShort: "AI key",
+    aiKeyButton: "Use your own Claude key",
+    aiKeyButtonSet: "Your Claude key is in use",
+    aiKeyTitle: "Use your own Claude key",
+    aiKeyIntro:
+      "BerthIQ's advice is written by Anthropic's Claude. The site covers a few free AI runs a day, shared by everyone. Add your own Anthropic API key to keep getting AI advice; the runs are then billed to your Anthropic account.",
+    aiKeyFreeRunsLeft: "Free AI runs left today: {left} of {total}",
+    aiKeyNoFreeRuns: "This site has no free AI runs, so AI advice needs your own key.",
+    aiKeyLabel: "Anthropic API key",
+    aiKeyGetOne: "Get a key from the Anthropic Console",
+    aiKeySave: "Use this key",
+    aiKeyRemove: "Remove my key",
+    aiKeyInUse: "Your key is in use for AI advice in this tab.",
+    aiKeyInvalid: "That doesn't look like an Anthropic API key. It starts with sk-ant-.",
+    aiKeyPrivacy:
+      "Your key stays in this browser tab and is removed when you close it. It is sent only to the BerthIQ server with your AI requests, used for that request, and never stored or logged.",
+    aiQuotaUsedNotice:
+      "Today's free AI runs are used up, so this is standard guidance for this congestion level. The congestion level and evidence are unaffected.",
+    aiNoKeyNotice:
+      "This site has no AI key of its own, so this is standard guidance for this congestion level. The congestion level and evidence are unaffected.",
+    aiKeyRejectedNotice:
+      "Anthropic didn't accept your key, so this is standard guidance for this congestion level. Check the key and try again.",
+    aiAddKeyCta: "Add your own Claude key",
     aiFallbackNotice: "AI advice is unavailable right now, so this is standard guidance for this congestion level. The congestion level and evidence are unaffected.",
     idleTimeNow: "Ship time lost to waiting",
     shipHours: "ship-hours",
@@ -293,6 +317,30 @@ export const TRANSLATIONS: Record<Locale, Dict> = {
 
     impactTitle: "القيمة المتوقعة",
     estimate: "تقدير",
+    close: "إغلاق",
+    aiKeyShort: "مفتاح الذكاء الاصطناعي",
+    aiKeyButton: "استخدم مفتاح Claude الخاص بك",
+    aiKeyButtonSet: "مفتاح Claude الخاص بك قيد الاستخدام",
+    aiKeyTitle: "استخدم مفتاح Claude الخاص بك",
+    aiKeyIntro:
+      "يكتب Claude من Anthropic نصائح BerthIQ. يوفّر الموقع عددًا قليلًا من التشغيلات المجانية يوميًا يتشاركها الجميع. أضف مفتاح Anthropic API الخاص بك لمواصلة الحصول على نصائح الذكاء الاصطناعي، وتُحتسب التكلفة على حسابك في Anthropic.",
+    aiKeyFreeRunsLeft: "التشغيلات المجانية المتبقية اليوم: {left} من {total}",
+    aiKeyNoFreeRuns: "لا يوفّر هذا الموقع تشغيلات مجانية، لذا تحتاج نصائح الذكاء الاصطناعي إلى مفتاحك الخاص.",
+    aiKeyLabel: "مفتاح Anthropic API",
+    aiKeyGetOne: "احصل على مفتاح من Anthropic Console",
+    aiKeySave: "استخدم هذا المفتاح",
+    aiKeyRemove: "إزالة مفتاحي",
+    aiKeyInUse: "مفتاحك قيد الاستخدام لنصائح الذكاء الاصطناعي في هذه النافذة.",
+    aiKeyInvalid: "لا يبدو هذا مفتاح Anthropic API. يبدأ المفتاح بـ sk-ant-.",
+    aiKeyPrivacy:
+      "يبقى مفتاحك في نافذة المتصفح هذه فقط ويُحذف عند إغلاقها. يُرسَل إلى خادم BerthIQ مع طلبات الذكاء الاصطناعي فقط، ويُستخدم لذلك الطلب، ولا يُخزَّن أو يُسجَّل.",
+    aiQuotaUsedNotice:
+      "نفدت التشغيلات المجانية لليوم، لذا هذه إرشادات قياسية لهذا المستوى من الازدحام. مستوى الازدحام والأدلة لم يتأثرا.",
+    aiNoKeyNotice:
+      "لا يملك هذا الموقع مفتاح ذكاء اصطناعي خاصًا به، لذا هذه إرشادات قياسية لهذا المستوى من الازدحام. مستوى الازدحام والأدلة لم يتأثرا.",
+    aiKeyRejectedNotice:
+      "لم تقبل Anthropic مفتاحك، لذا هذه إرشادات قياسية لهذا المستوى من الازدحام. تحقّق من المفتاح وحاول مرة أخرى.",
+    aiAddKeyCta: "أضف مفتاح Claude الخاص بك",
     aiFallbackNotice: "نصائح الذكاء الاصطناعي غير متاحة حاليًا، لذا هذه إرشادات قياسية لهذا المستوى من الازدحام. مستوى الازدحام والأدلة لم يتأثرا.",
     idleTimeNow: "وقت السفن الضائع في الانتظار",
     shipHours: "ساعة-سفينة",

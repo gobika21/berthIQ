@@ -23,7 +23,33 @@ PRICE_OUTPUT_PER_MTOK = float(os.environ.get("CLAUDE_PRICE_OUTPUT_PER_MTOK", "25
 _client: Anthropic | None = None
 
 
+class NoClaudeAccess(RuntimeError):
+    """Raised instead of calling Claude when this request may not use the server's key
+    (free daily quota used up, or no server key configured) and brought no key of its own.
+    It is a RuntimeError, so the advisory falls back to rule-based advice."""
+
+
+# Per-request Claude access, set by the API before running the agents:
+#   ("own", key)  -> the visitor's own Anthropic key (never stored or logged)
+#   ("server",)   -> the server's ANTHROPIC_API_KEY (one free-quota run claimed)
+#   ("none", why) -> no Claude this time; `why` becomes the advisory's ai_error
+# Unset (the monitor, CLI, tests) means the server key.
+_access: ContextVar[tuple | None] = ContextVar("claude_access", default=None)
+
+
+def set_access(access: tuple) -> None:
+    """Set Claude access for the rest of this request. Background work started from it
+    (asyncio tasks, to_thread, copied contexts) inherits it."""
+    _access.set(access)
+
+
 def get_client() -> Anthropic:
+    access = _access.get()
+    if access is not None:
+        if access[0] == "own":
+            return Anthropic(api_key=access[1], timeout=TIMEOUT_S, max_retries=MAX_RETRIES)
+        if access[0] == "none":
+            raise NoClaudeAccess(access[1])
     global _client
     if _client is None:
         api_key = os.environ.get("ANTHROPIC_API_KEY")

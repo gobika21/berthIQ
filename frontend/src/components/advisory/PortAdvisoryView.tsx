@@ -16,6 +16,7 @@ import { EvidencePanel } from "./EvidencePanel";
 import { ImpactPanel } from "./ImpactPanel";
 import { LoadingSteps } from "./LoadingSteps";
 import { useLocale } from "@/components/LocaleProvider";
+import { fallbackNoticeKey, keyWouldHelp, openAiKeyDialog } from "@/lib/aiKey";
 import { api, ApiError } from "@/lib/api";
 import { useLiveVesselQueue } from "@/lib/hooks";
 import { TIER_STYLES } from "@/lib/tier";
@@ -249,7 +250,17 @@ export function PortAdvisoryView({ portId }: { portId: string }) {
             <div role="status"
               className="mb-3 flex items-start gap-2.5 rounded-sm border border-tier-medium/30 bg-tier-mediumSoft px-4 py-3 text-sm text-ink">
               <Info className="mt-0.5 h-4 w-4 flex-shrink-0" strokeWidth={1.75} aria-hidden="true" />
-              <span>{t("aiFallbackNotice")}</span>
+              <span>
+                  {t(fallbackNoticeKey(result.ai_error))}
+                  {keyWouldHelp(result.ai_error) && (
+                    <>
+                      {" "}
+                      <button type="button" onClick={openAiKeyDialog} className="font-medium text-accent hover:underline">
+                        {t("aiAddKeyCta")}
+                      </button>
+                    </>
+                  )}
+                </span>
             </div>
           )}
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">

@@ -1,8 +1,15 @@
-import type { AdvisoryResult, Alert, AlertStatus, LiveVesselQueue, PortSnapshot, PortSummary } from "./types";
+import { getAiKey } from "./aiKey";
+import type { AdvisoryResult, AiQuota, Alert, AlertStatus, LiveVesselQueue, PortSnapshot, PortSummary } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_BERTHIQ_API_URL ?? "http://localhost:8000";
 
 export class ApiError extends Error {}
+
+/** Header for requests that call Claude: the visitor's own key, when they added one. */
+function aiHeaders(): Record<string, string> {
+  const key = getAiKey();
+  return key ? { "X-Anthropic-Key": key } : {};
+}
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   let res: Response;
@@ -31,12 +38,14 @@ export const api = {
     ),
   liveVesselQueueAll: (lang = "en") => request<LiveVesselQueue[]>(`/live/vessel-queue/all?lang=${lang}`),
   runAdvisory: (snapshot: PortSnapshot) =>
-    request<AdvisoryResult>("/advisory", { method: "POST", body: JSON.stringify(snapshot) }),
+    request<AdvisoryResult>("/advisory", { method: "POST", body: JSON.stringify(snapshot), headers: aiHeaders() }),
+  aiQuota: () => request<AiQuota>("/ai/quota"),
 
   listAlerts: (status?: AlertStatus) => request<Alert[]>(`/alerts${status ? `?status=${status}` : ""}`),
   alertAction: (id: string, action: "acknowledge" | "approve" | "reject" | "resolve", note?: string) =>
     request<Alert>(`/alerts/${id}/${action}`, { method: "POST", body: JSON.stringify({ note: note ?? null }) }),
-  requestAlertAdvisory: (id: string) => request<Alert>(`/alerts/${id}/advisory`, { method: "POST" }),
+  requestAlertAdvisory: (id: string) =>
+    request<Alert>(`/alerts/${id}/advisory`, { method: "POST", headers: aiHeaders() }),
   demoReplay: (portId = "rotterdam") =>
-    request<Alert>(`/demo/replay?port=${encodeURIComponent(portId)}`, { method: "POST" }),
+    request<Alert>(`/demo/replay?port=${encodeURIComponent(portId)}`, { method: "POST", headers: aiHeaders() }),
 };

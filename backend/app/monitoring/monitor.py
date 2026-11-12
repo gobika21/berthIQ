@@ -19,6 +19,7 @@ import time
 from collections import deque
 
 from app.advisory_service import run_advisory
+from app.ai_quota import claim_free_run
 from app.agents.classification import LIVE_TIER_METRICS, classify_snapshot
 from app.live.aisstream_client import PORTS, build_port_snapshot, cache
 from app.monitoring.alerts import AlertError, alerts
@@ -191,7 +192,7 @@ class Monitor:
 
     # ---------------------------------------------------------------- alerts + advice
     def raise_alert(self, port_id: str, port_name: str, spec: dict, snapshot: dict | None,
-                    demo: bool = False) -> dict | None:
+                    demo: bool = False, auto_advise: bool = True) -> dict | None:
         alert_type = spec["alert_type"]
         if not demo and alerts.recent_exists(spec["dedupe_key"], COOLDOWN_SECONDS[alert_type]):
             return None
@@ -209,8 +210,13 @@ class Monitor:
         )
         logger.info("Alert raised: %s (%s)", spec["title"]["en"], alert["id"])
 
-        if advise_snapshot and AUTO_ADVISORY and self._advisory_budget_ok():
-            self.schedule_advisory(alert["id"])
+        # Drafting on its own spends the server's key, so it also needs a free run from
+        # today's shared allowance; otherwise the alert waits for someone to request advice.
+        if advise_snapshot and auto_advise and AUTO_ADVISORY and self._advisory_budget_ok():
+            if claim_free_run():
+                self.schedule_advisory(alert["id"])
+            else:
+                logger.info("No free AI runs left today; alert %s left for manual advice", alert["id"])
         return alert
 
     def _advisory_budget_ok(self) -> bool:

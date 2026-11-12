@@ -111,8 +111,13 @@ export interface AdvisoryResult {
   evidence: Evidence;
   impact: Impact;
   ai_status?: "ok" | "fallback"; // "fallback": Claude unavailable, standard rule-based advice
-  ai_error?: string | null;
+  ai_error?: string | null; // e.g. "free_quota_used", "no_key", "AuthenticationError"
   usage?: AdvisoryUsage;
+}
+
+export interface AiQuota {
+  free_runs_per_day: number; // 0 when the site has no key of its own
+  free_runs_left: number; // shared by every visitor; resets at midnight UTC
 }
 
 export interface AdvisoryUsage {

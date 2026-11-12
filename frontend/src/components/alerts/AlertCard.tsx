@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { Card, CardBody } from "@/components/ui/Card";
 import { TierBadge } from "@/components/ui/TierBadge";
 import { useLocale } from "@/components/LocaleProvider";
+import { fallbackNoticeKey, keyWouldHelp, openAiKeyDialog } from "@/lib/aiKey";
 import { api, ApiError } from "@/lib/api";
 import { cn } from "@/lib/cn";
 import { fill, formatNumber, formatUsd, timeAgo } from "@/lib/format";
@@ -151,7 +152,17 @@ export function AlertCard({
               <div role="status"
                 className="flex items-start gap-2.5 rounded-sm border border-tier-medium/30 bg-tier-mediumSoft px-4 py-3 text-sm text-ink">
                 <Info className="mt-0.5 h-4 w-4 flex-shrink-0" strokeWidth={1.75} aria-hidden="true" />
-                <span>{t("aiFallbackNotice")}</span>
+                <span>
+                  {t(fallbackNoticeKey(advisory.ai_error))}
+                  {keyWouldHelp(advisory.ai_error) && (
+                    <>
+                      {" "}
+                      <button type="button" onClick={openAiKeyDialog} className="font-medium text-accent hover:underline">
+                        {t("aiAddKeyCta")}
+                      </button>
+                    </>
+                  )}
+                </span>
               </div>
             )}
             <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">

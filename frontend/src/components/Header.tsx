@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Anchor, Bell, Languages, Pause, Play } from "lucide-react";
+import { AiKeyButton } from "@/components/AiKeyDialog";
 import { useLocale } from "@/components/LocaleProvider";
 import { LOCALE_LABEL } from "@/lib/i18n";
 import { useAlerts } from "@/lib/hooks";
@@ -61,6 +62,8 @@ export function Header() {
             )}
           </Link>
         </nav>
+
+        <AiKeyButton className={iconButton} />
 
         <button
           type="button"

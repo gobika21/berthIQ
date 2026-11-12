@@ -14,7 +14,7 @@ import anthropic
 from app.agents.classification import classify_snapshot
 from app.agents.monitoring import SnapshotValidationError, monitoring_node
 from app.agents.precedent_retrieval import precedent_retrieval_node
-from app.claude_client import track_usage
+from app.claude_client import NoClaudeAccess, track_usage
 from app.fallback import fallback_advice
 from app.graph import run_pipeline
 from app.impact import estimate_impact
@@ -53,7 +53,9 @@ def run_advisory(snapshot: dict) -> dict:
             raise  # bad input is the caller's problem, not a reason to fall back
         except CLAUDE_FAILURES as exc:
             logger.warning("Claude unavailable, using rule-based advice: %s: %s", type(exc).__name__, exc)
-            ai_status, ai_error = "fallback", type(exc).__name__
+            # NoClaudeAccess carries its reason ("free_quota_used" / "no_key"); anything
+            # else is reported by its class name, e.g. AuthenticationError for a bad key.
+            ai_status, ai_error = "fallback", str(exc) if isinstance(exc, NoClaudeAccess) else type(exc).__name__
             result = _rule_based_result(snapshot)
 
     clean = result["snapshot"]  # validated/normalised by the Monitoring agent
